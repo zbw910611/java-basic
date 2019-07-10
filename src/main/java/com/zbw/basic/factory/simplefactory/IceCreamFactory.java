@@ -1,5 +1,9 @@
 package com.zbw.basic.factory.simplefactory;
 
+import com.zbw.basic.factory.simplefactory.impl.AppleIceCream;
+import com.zbw.basic.factory.simplefactory.impl.BananaIceCream;
+import com.zbw.basic.factory.simplefactory.impl.OrangeIceCream;
+
 public class IceCreamFactory {
     public static IceCream creamIceCream(String taste){
 

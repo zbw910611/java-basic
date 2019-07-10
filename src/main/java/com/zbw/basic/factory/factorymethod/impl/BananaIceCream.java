@@ -1,4 +1,6 @@
-package com.zbw.basic.factory.simplefactory;
+package com.zbw.basic.factory.factorymethod.impl;
+
+import com.zbw.basic.factory.factorymethod.IceCream;
 
 public class BananaIceCream implements IceCream {
 

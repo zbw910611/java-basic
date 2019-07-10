@@ -1,4 +1,6 @@
-package com.zbw.basic.factory.simplefactory;
+package com.zbw.basic.factory.simplefactory.impl;
+
+import com.zbw.basic.factory.simplefactory.IceCream;
 
 public class OrangeIceCream implements IceCream {
 
