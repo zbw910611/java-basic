@@ -1,0 +1,187 @@
+4 单例模式
+4.1概念
+它的核心结构中包含一个被称为单例的特殊类；
+4.2 特点
+（1）单例类只能有一个实例；
+构造方法限定为private，避免了类在外部被实例化；
+（2）单例类必须自己创建自己的唯一实例；
+（3）单例类必须给所有其他对象提供这一实例；
+4.3实现单例模式
+4.3.1饿汉式单例（立即加载方式）
+解释：在类加载时完成了初始化；
+饿汉式单例在类加载初始化时就创建好一个静态的对象供外部使用，除非系统重启，这个对象不会改变，所以本身就是线程安全的；
+代码2种写法
+（1）
+/*
+ * @description 饿汉式单例第一种方式
+ * @author bingweizhang
+ * @Date 2019/7/17
+ */
+public class Singleton1 {
+
+    //私有构造
+    private Singleton1() {}
+
+    private static Singleton1 singleton1 = new Singleton1();
+
+    //静态工厂方法
+    public static Singleton1 getInstance(){
+        return singleton1;
+    }
+}
+
+(2)
+/*
+ * @description 饿汉式单例第二种方式
+ * @author bingweizhang
+ * @Date 2019/7/17
+ */
+public class Singleton2 {
+
+    //私有构造
+    private Singleton2() {}
+
+    private static Singleton2 singleton = null;
+
+    //静态代码块
+    static{
+        singleton = new Singleton2();
+    }
+
+    //静态工厂方法
+    public static Singleton2 getInstance(){
+        return singleton;
+    }
+}
+
+4.3.2懒汉式单例（延迟加载方式）
+解释：在类加载时不初始化；
+线程不安全；
+代码:
+/*
+ * @description 懒汉式单例线程不安全写法
+ * @author bingweizhang
+ * @Date 2019/7/17
+ */
+public class Singleton3 {
+
+    //私有构造
+    private Singleton3() {}
+
+    private static Singleton3 singleton = null;
+
+    //静态工厂方法
+    public static Singleton3 getInstance(){
+        if(singleton == null){
+            try {
+                //让线程休息1000毫秒
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            singleton = new Singleton3();
+        }
+        return singleton;
+    }
+}
+
+代码问题：
+该示例虽然用延迟加载方式实现了懒汉式单例，但在多线程环境下会产生多个singleton对象；
+
+解决懒汉式线程不安全
+使用synchronized同步锁，synchronized和static一起修饰当前类，只有synchronized时，只修饰当前对象；
+/*
+ * @description 懒汉式单例同步锁
+ * @author bingweizhang
+ * @Date 2019/7/17
+ */
+public class Singleton4 {
+
+    //私有构造
+    private Singleton4(){}
+
+    private static Singleton4 singleton = null;
+
+    //静态工厂方法
+    synchronized public static Singleton4 getInstance(){
+        if(singleton == null){
+            try {
+                //让线程休息1000毫秒
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            singleton = new Singleton4();
+        }
+        return singleton;
+    }
+}
+
+在方法上加synchronized同步锁，此种方式虽然解决了多个实例对象问题，但是该方式运行效率很低，下一个线程想要获取对象，就必须等待上一个线程释放锁之后，才可以继续运行；
+使用双重检查进一步优化，可以避免整个方法被锁，只需对需要锁的代码部分加锁，可以提高执行效率；
+/*
+ * @description 懒汉式单例双重检查同步锁
+ * @author bingweizhang
+ * @Date 2019/7/17
+ */
+public class Singleton5 {
+
+    //私有构造
+    private Singleton5() {}
+
+    private static Singleton5 singleton = null;
+
+    //静态工厂方法
+    public static Singleton5 getInstance(){
+        if(singleton == null){
+            try {
+                //让线程休息1000毫秒
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized(Singleton5.class){
+                if(singleton == null){
+                    singleton = new Singleton5();
+                }
+            }
+        }
+        return singleton;
+    }
+}
+
+
+4.3.3静态内部类实现
+代码
+/**
+ * @description 静态内部类实现单例
+ * @author bingweizhang
+ * @Date 2019/7/17
+ */
+public class Singleton6 {
+
+    //私有构造
+    private Singleton6(){}
+
+    //静态内部类
+    //外部类被加载，内部类没有被加载，除非被调用时使用
+    private static class InSideClass{
+        private static Singleton6 singleton = new Singleton6();
+    }
+
+    //静态工厂方法
+    public static Singleton6 getInstance(){
+        return InSideClass.singleton;
+    }
+}
+
+4.4 分析
+4.4.1 优点
+（1）在内存里只有一个实例，减少了内存的开销，尤其是频繁的创建和销毁实例；
+（2）避免对资源的多重占用（比如写文件操作）；
+4.4.1 缺点
+扩展很困难
+
+4.5 应用场景
+（1）web中的计数器，不用每次刷新都在数据库里加一次，用单例先缓存起来；
+（2）创建的一个对象需要消耗的资源过多，比如I/O或数据库的连接等；

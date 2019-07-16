@@ -1,6 +1,5 @@
 package com.zbw.basic.twentythreemodel.factory.abstractfactory.impl;
 
-import com.zbw.basic.factory.abstractfactory.*;
 import com.zbw.basic.twentythreemodel.factory.abstractfactory.BigIceCream;
 import com.zbw.basic.twentythreemodel.factory.abstractfactory.IceCreamFactory;
 import com.zbw.basic.twentythreemodel.factory.abstractfactory.SmallIceCream;
