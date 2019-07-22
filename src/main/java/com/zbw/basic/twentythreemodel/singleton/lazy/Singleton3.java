@@ -16,7 +16,7 @@ public class Singleton3 {
     public static Singleton3 getInstance(){
         if(singleton == null){
             try {
-                //让线程休息10毫秒
+                //让线程休息1000毫秒
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
