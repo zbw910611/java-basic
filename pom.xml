@@ -56,6 +56,16 @@
         </dependency>
         <!--log4j-->
 
+        <!--实体类自动配置getset-->
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--实体类自动配置getset-->
+
     </dependencies>
 
     <!--配置默认maven和jdk版本-->
