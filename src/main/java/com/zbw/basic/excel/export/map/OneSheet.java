@@ -6,6 +6,7 @@ import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -45,7 +46,7 @@ public class OneSheet {
 //            System.out.println(lastRowNum);
             Row insertRow = sheet.createRow(1);
             insertRow.createCell(0).setCellValue("qqq");
-            insertRow.createCell(1).setCellValue("www");
+            insertRow.createCell(1).setCellValue("");
             insertRow.createCell(2).setCellValue("eee");
             insertRow.createCell(3).setCellValue("rrr");
             insertRow.createCell(4).setCellValue("ttt");
@@ -64,7 +65,10 @@ public class OneSheet {
 //            insertRow.setHeight(firstRow.getHeight());
 //            sheet.shiftRows(lastRowNum + 1,lastRowNum + 1,-34,true,false);
 
-            FileOutputStream fos = new FileOutputStream("E:/IOStreamTest/价格分析表2.xls");
+            //合并第二行第一第二列
+            CellRangeAddress region=new CellRangeAddress(1, 1, 0, 1);
+            sheet.addMergedRegion(region);
+            FileOutputStream fos = new FileOutputStream("E:/IOStreamTest/价格分析表OneSheet.xls");
             workbook.write(fos);
             fos.close();
         } catch (FileNotFoundException e) {

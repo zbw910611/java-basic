@@ -5,14 +5,17 @@ import java.sql.*;
 
 public class JdbcConnection {
 	 //数据库用户名  
-    private static final String USERNAME = "root";  
-    //数据库密码  
-    private static final String PASSWORD = "123456";
-    //驱动信息   
+    private static final String USERNAME = "u_cloud";
+//    private static final String USERNAME = "root";
+    //数据库密码
+    private static final String PASSWORD = "123";
+//    private static final String PASSWORD = "123456";
+    //驱动信息
     private static final String DRIVER = "com.mysql.jdbc.Driver";  
     //数据库地址  
-    private static final String URL = "jdbc:mysql://172.16.1.235:3306/logistics_crm?serverTimezone=UTC";
-    private static Connection connection;  
+    private static final String URL = "jdbc:mysql://172.16.21.173:3306/logistics_order?serverTimezone=UTC";
+//    private static final String URL = "jdbc:mysql://172.16.1.235:3306/logistics_crm?serverTimezone=UTC";
+    private static Connection connection;
     private static PreparedStatement preparedStatement;  
     private static ResultSet resultSet;  
     public JdbcConnection() {  

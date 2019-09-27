@@ -35,7 +35,7 @@ public class ManySheet {
             mapList.add(stringObjectMap3);
 
             Workbook workbook = ExcelExportUtilSelf.exportExcelMap(mapList, ExcelType.HSSF);
-            FileOutputStream fos = new FileOutputStream("E:/IOStreamTest/价格分析表.xls");
+            FileOutputStream fos = new FileOutputStream("E:/IOStreamTest/价格分析表ManySheet.xls");
             workbook.write(fos);
             fos.close();
         } catch (FileNotFoundException e) {
