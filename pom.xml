@@ -66,6 +66,14 @@
         </dependency>
         <!--实体类自动配置getset-->
 
+        <!--String.format格式化字符串长度不够补0-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <!--String.format格式化字符串长度不够补0-->
+
     </dependencies>
 
     <!--配置默认maven和jdk版本-->
