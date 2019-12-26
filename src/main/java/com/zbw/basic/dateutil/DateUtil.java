@@ -66,7 +66,7 @@ public class DateUtil {
 	/**
 	 * 日期格式，年月日，例如：2016年10月05日
 	 */
-	public static final String DATE_TIME_FORMAT_YYYY年MM月DD日 = "yyyy年MM月dd日";
+//	public static final String DATE_TIME_FORMAT_YYYY年MM月DD日 = "yyyy年MM月dd日";
 
 
 	// ==格式到年月日 时分 ==
