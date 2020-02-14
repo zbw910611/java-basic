@@ -74,6 +74,18 @@
         </dependency>
         <!--String.format格式化字符串长度不够补0-->
 
+        <!--语音识别百度云包和音频文件转换包-->
+        <dependency>
+            <groupId>com.baidu.aip</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>mp3spi</artifactId>
+            <version>1.9.5.4</version>
+        </dependency>
+
     </dependencies>
 
     <!--配置默认maven和jdk版本-->

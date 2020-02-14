@@ -1,0 +1,6172 @@
+SELECT
+	ecode code1,
+	decode( bcode, '0', ecode, bcode ) bcode,
+	aname,
+	round( nbmmny, 2 ) nbmmny,
+	vbillcode,
+	vname,
+	jbr,
+	bm,
+	htqyje,
+	htdtje,
+	ljshk,
+	ljsfk,
+	sfk,
+	hj,
+	yi,
+	er,
+	san,
+	si,
+	wu,
+	liu,
+	qi,
+	ba,
+	jiu,
+	shi,
+	shiy,
+	shie,
+	( nbmmny - ljsfk ) fsje,
+CASE
+
+		WHEN nbmmny = 0 THEN
+		0 ELSE ( ( nbmmny - ljsfk ) / nbmmny )
+	END fsbl,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+FROM
+	(
+	SELECT
+		ecode,
+		decode( bcode, NULL, '0', bcode ) bcode,
+		aname,
+		round( nbmmny, 2 ) nbmmny,
+		vbillcode,
+		vname,
+		jbr,
+		bm,
+		htqyje,
+		htdtje,
+		ljshk,
+		ljsfk,
+		sfk,
+		hj,
+		yi,
+		er,
+		san,
+		si,
+		wu,
+		liu,
+		qi,
+		ba,
+		jiu,
+		shi,
+		shiy,
+		shie,
+		( nbmmny - ljsfk ) fsje,
+	CASE
+
+			WHEN nbmmny = 0 THEN
+			0 ELSE ( ( nbmmny - ljsfk ) / nbmmny )
+		END fsbl,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+FROM
+	(
+	SELECT
+		ecode,
+		bcode,
+		aname,
+		round( nbmmny, 2 ) nbmmny,
+		vbillcode,
+		vname,
+		jbr,
+		bm,
+		htqyje,
+		htdtje,
+		ljshk,
+		ljsfk,
+		sfk,
+		hj,
+		yi,
+		er,
+		san,
+		si,
+		wu,
+		liu,
+		qi,
+		ba,
+		jiu,
+		shi,
+		shiy,
+		shie,
+		( nbmmny - ljsfk ) fsje,
+	CASE
+
+			WHEN nbmmny = 0 THEN
+			0 ELSE ( ( nbmmny - ljsfk ) / nbmmny )
+		END fsbl,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+FROM
+	(
+	SELECT
+		fd.ecode ecode,
+		fd.bcode bcode,
+		cbxm.name aname,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL vname,
+		NULL vbillcode,
+		NULL jbr,
+		NULL bm,
+		sum( fd.htqyje ) htqyje,
+		sum( fd.htdtje ) htdtje,
+		sum( fd.ljshk ) ljshk,
+		sum( fd.ljsfk ) ljsfk,
+		sum( fd.sfk ) sfk,
+		sum( fd.hj ) hj,
+		sum( fd.yi ) yi,
+		sum( fd.er ) er,
+		sum( fd.san ) san,
+		sum( fd.si ) si,
+		sum( fd.wu ) wu,
+		sum( fd.liu ) liu,
+		sum( fd.qi ) qi,
+		sum( fd.ba ) ba,
+		sum( fd.jiu ) jiu,
+		sum( fd.shi ) shi,
+		sum( fd.shiy ) shiy,
+		sum( fd.shie ) shie,
+		NULL pk_project,
+		( parameter ( 'pk_org' ) ) pk_org,
+		NULL xmcode,
+		NULL xmname,
+		cbxm.pk_group pk_group,
+		NULL pk_costpro
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro
+		RIGHT JOIN (
+		SELECT
+			substr( ecode, 1, 2 ) ecode,
+			substr( bcode, 1, 2 ) bcode,
+			name,
+			round( nbmmny, 2 ),
+			htqyje,
+			htdtje,
+			ljshk,
+			ljsfk,
+			sfk,
+			hj,
+			yi,
+			er,
+			san,
+			si,
+			wu,
+			liu,
+			qi,
+			ba,
+			jiu,
+			shi,
+			shiy,
+			shie,
+			pk_org,
+			pk_group,
+			pk_costpro
+		FROM
+			(
+			SELECT
+				sd.ecode,
+				sd.bcode,
+				cbxm.name name,
+				round( mbc.nbmmny, 2 ) nbmmny,
+				NULL vname,
+				NULL vbillcode,
+				NULL jbr,
+				NULL bm,
+				sum( sd.htqyje ) htqyje,
+				sum( sd.htdtje ) htdtje,
+				sum( sd.ljshk ) ljshk,
+				sum( sd.ljsfk ) ljsfk,
+				sum( sd.sfk ) sfk,
+				sum( sd.hj ) hj,
+				sum( sd.yi ) yi,
+				sum( sd.er ) er,
+				sum( sd.san ) san,
+				sum( sd.si ) si,
+				sum( sd.wu ) wu,
+				sum( sd.liu ) liu,
+				sum( sd.qi ) qi,
+				sum( sd.ba ) ba,
+				sum( sd.jiu ) jiu,
+				sum( sd.shi ) shi,
+				sum( sd.shiy ) shiy,
+				sum( sd.shie ) shie,
+				NULL pk_project,
+				( parameter ( 'pk_org' ) ) pk_org,
+				NULL xmcode,
+				NULL xmname,
+				cbxm.pk_group pk_group,
+				NULL pk_costpro
+			FROM
+				fdcpm_bd_costpro cbxm
+				LEFT JOIN (
+				SELECT
+					cbxm.pk_costpro,
+					sum( mbc.nbmmny ) nbmmny
+				FROM
+					fdcpm_bd_costpro cbxm
+					LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+					AND cbxm.dr = 0
+					AND mbc.dr = 0
+					LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+					AND cbmx.dr = 0
+					LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+					AND cbgj.dr = 0
+				WHERE
+					cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+				GROUP BY
+					cbxm.pk_costpro
+				) mbc ON mbc.pk_costpro = cbxm.pk_costpro
+				RIGHT JOIN (
+				SELECT
+					substr( code, 1, 4 ) ecode,
+					substr( bcode, 1, 4 ) bcode,
+					code,
+					name,
+					round( nbmmny, 2 ),
+					htqyje,
+					htdtje,
+					ljshk,
+					ljsfk,
+					sfk,
+					hj,
+					yi,
+					er,
+					san,
+					si,
+					wu,
+					liu,
+					qi,
+					ba,
+					jiu,
+					shi,
+					shiy,
+					shie,
+					pk_project,
+					pk_org,
+					xmcode,
+					xmname,
+					pk_group,
+					pk_costpro
+				FROM
+					(
+					SELECT
+						cbxm.code acode,
+						cbxm.code bcode,
+						cbxm.code ecode,
+						cbxm.code,
+						cbxm.name,
+						mbc.nbmmny nbmmny,
+						NULL vname,
+						NULL vbillcode,
+						NULL jbr,
+						NULL bm,
+						sum( w.htqyje ) htqyje,
+						sum( w.htdtje ) htdtje,
+						sum( w.ljshk ) ljshk,
+						sum( w.ljsfk ) ljsfk,
+						sum( w.sfk ) sfk,
+						sum( w.hj ) hj,
+						sum( w.yi ) yi,
+						sum( w.er ) er,
+						sum( w.san ) san,
+						sum( w.si ) si,
+						sum( w.wu ) wu,
+						sum( w.liu ) liu,
+						sum( w.qi ) qi,
+						sum( w.ba ) ba,
+						sum( w.jiu ) jiu,
+						sum( w.shi ) shi,
+						sum( w.shiy ) shiy,
+						sum( w.shie ) shie,
+						NULL pk_project,
+						( parameter ( 'pk_org' ) ) pk_org,
+						NULL xmcode,
+						NULL xmname,
+						cbxm.pk_group pk_group,
+						NULL pk_costpro
+					FROM
+						fdcpm_bd_costpro cbxm
+						LEFT JOIN (
+						SELECT
+							cbxm.pk_costpro,
+							sum( mbc.nbmmny ) nbmmny
+						FROM
+							fdcpm_bd_costpro cbxm
+							LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+							AND cbxm.dr = 0
+							AND mbc.dr = 0
+							LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+							AND cbmx.dr = 0
+							LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+							AND cbgj.dr = 0
+						WHERE
+							cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+						GROUP BY
+							cbxm.pk_costpro
+						) mbc ON mbc.pk_costpro = cbxm.pk_costpro
+						RIGHT JOIN (
+						SELECT
+							code,
+							name,
+							nbmmny,
+							vbillcode,
+							vname,
+							jbr,
+							bm,
+							htqyje,
+							htdtje,
+							ljshk,
+							ljsfk,
+							sfk,
+							hj,
+							yi,
+							er,
+							san,
+							si,
+							wu,
+							liu,
+							qi,
+							ba,
+							jiu,
+							shi,
+							shiy,
+							shie,
+							pk_project,
+							pk_org,
+							xmcode,
+							xmname,
+							pk_group,
+							pk_costpro
+						FROM
+							(
+							SELECT
+							CASE
+
+								WHEN
+									fk.bisnocont = 'N' THEN
+										o1.code ELSE o2.code
+									END code,
+				CASE
+
+						WHEN fk.bisnocont = 'N' THEN
+						o1.name ELSE o2.name
+						END name,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.nbmmny ELSE o2.nbmmny
+	END nbmmny,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vbillcode ELSE wht.vbillcode
+	END vbillcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vname ELSE wht.vnocontname
+	END vname,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.jbr ELSE ry2.jbr
+	END jbr,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.bm ELSE ry2.bm
+	END bm,
+CASE
+
+	WHEN htlr.bisattach = 'N' THEN
+	htlr.norigcontsignmny * o1.bl
+	WHEN htlr.bisattach = 'Y' THEN
+	( htlr.norigcontsignmny + htlr.norigattachsignmny ) * o1.bl
+	WHEN fk.bisnocont = 'Y' THEN
+	wht.norignocontmny * o2.bl
+	END htqyje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	b.dt * o1.bl ELSE NULL
+	END htdtje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	c1.yf * o1.bl ELSE c2.yf * o2.bl
+	END ljshk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	j1.norigthismny * o1.bl ELSE j2.norigthismny * o2.bl
+	END ljsfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	d1.ljsf * o1.bl ELSE d2.ljsf * o2.bl
+	END sfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	e1.ljsf * o1.bl ELSE e2.ljsf * o2.bl
+	END hj,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f11.yi * o1.bl ELSE f12.yi * o2.bl
+	END yi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f21.mingxi * o1.bl ELSE f22.mingxi * o2.bl
+	END er,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f31.mingxi * o1.bl ELSE f32.mingxi * o2.bl
+	END san,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f41.mingxi * o1.bl ELSE f42.mingxi * o2.bl
+	END si,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f51.mingxi * o1.bl ELSE f52.mingxi * o2.bl
+	END wu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f61.mingxi * o1.bl ELSE f62.mingxi * o2.bl
+	END liu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f71.mingxi * o1.bl ELSE f72.mingxi * o2.bl
+	END qi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f81.mingxi * o1.bl ELSE f82.mingxi * o2.bl
+	END ba,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f91.mingxi * o1.bl ELSE f92.mingxi * o2.bl
+	END jiu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f101.mingxi * o1.bl ELSE f102.mingxi * o2.bl
+	END shi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f111.mingxi * o1.bl ELSE f112.mingxi * o2.bl
+	END shiy,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f121.mingxi * o1.bl ELSE f122.mingxi * o2.bl
+	END shie,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_project ELSE o2.pk_project
+	END pk_project,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_org ELSE o2.pk_org
+	END pk_org,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmcode ELSE o2.xmcode
+	END xmcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmname ELSE o2.xmname
+	END xmname,
+	fk.pk_group pk_group,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_costpro ELSE o2.pk_costpro
+	END pk_costpro
+FROM
+	fdcpm_pay_pay fk
+	LEFT JOIN fdcpm_co_cont htlr ON fk.pk_cont = htlr.pk_cont
+	AND fk.dr = 0
+	AND htlr.dr = 0
+	AND htlr.iversion = '0'
+	LEFT JOIN fdcpm_co_nocont wht ON fk.pk_nocont = wht.pk_nocont
+	AND wht.dr = 0
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_cont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.ieditdimension = '1'or edit.ieditdimension is null
+--where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '01' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	htlr.pk_cont pk_cont
+FROM
+	fdcpm_co_cont htlr
+	LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+	AND htlr.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont pk_cont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+		AND htlr.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) y1 ON htlr.pk_cont = y1.pk_cont
+	LEFT JOIN fdcpm_co_cont_plan plana ON htlr.pk_cont = plana.pk_cont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+WHERE
+	htlr.iversion = '0'
+	) o1 ON htlr.pk_cont = o1.pk_cont
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_nocont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '02' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	wht.pk_nocont pk_nocont
+FROM
+	fdcpm_co_nocont wht
+	LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+	AND wht.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont pk_nocont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+		AND wht.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) y1 ON wht.pk_nocont = y1.pk_nocont
+	LEFT JOIN fdcpm_co_nocont_plan plana ON wht.pk_nocont = plana.pk_nocont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+	) o2 ON wht.pk_nocont = o2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.*,
+	CASE
+
+			WHEN htlr.icontexecstatus = '3' THEN
+			nvl( htlr.norigsettlcostmny, 0 ) ELSE nvl(
+				(
+					nvl( htlr.norigcontsignmny, 0 ) + nvl( htlr.norigattachsignmny, 0 ) + nvl( htlr.norigcontchangeconfmny, 0 ) + nvl( htlr.norigcontchangeapplymny, 0 )
+				),
+				0
+			)
+		END AS dt
+	FROM
+		fdcpm_co_cont htlr
+	WHERE
+		htlr.dr = 0
+	) b ON htlr.pk_cont = b.pk_cont
+	AND htlr.dr = 0
+	LEFT JOIN fdcpm_pay_pay_acc jhxx ON fk.pk_pay = jhxx.pk_pay
+	AND jhxx.dr = 0
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN org_dept bm ON htlr.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND htlr.dr = 0
+		LEFT JOIN bd_psndoc ry ON htlr.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND htlr.dr = 0
+	) ry1 ON htlr.pk_cont = ry1.pk_cont
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN org_dept bm ON wht.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND wht.dr = 0
+		LEFT JOIN bd_psndoc ry ON wht.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND wht.dr = 0
+	) ry2 ON wht.pk_nocont = ry2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont cont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_apply fksq ON htlr.pk_cont = fksq.pk_cont
+		AND htlr.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		htlr.pk_cont
+	) c1 ON htlr.pk_cont = c1.cont
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont nocont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_apply fksq ON wht.pk_nocont = fksq.pk_nocont
+		AND wht.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		wht.pk_nocont
+	) c2 ON wht.pk_nocont = c2.nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_pay fk ON htlr.pk_cont = fk.pk_cont
+		AND fk.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) j1 ON htlr.pk_cont = j1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_pay fk ON wht.pk_nocont = fk.pk_nocont
+		AND fk.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) j2 ON wht.pk_nocont = j2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		fk.pk_cont pk_cont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont
+	) d1 ON htlr.pk_cont = d1.pk_cont
+	LEFT JOIN (
+	SELECT
+		fk.pk_nocont pk_nocont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont
+	) d2 ON wht.pk_nocont = d2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont,
+		fk.pk_cont
+	) e1 ON htlr.pk_cont = e1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont,
+		fk.pk_nocont
+	) e2 ON wht.pk_nocont = e2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f11 ON htlr.pk_cont = f11.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f12 ON wht.pk_nocont = f12.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f21 ON htlr.pk_cont = f21.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f22 ON wht.pk_nocont = f22.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f31 ON htlr.pk_cont = f31.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f32 ON wht.pk_nocont = f32.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f41 ON htlr.pk_cont = f41.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f42 ON wht.pk_nocont = f42.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f51 ON htlr.pk_cont = f51.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f52 ON wht.pk_nocont = f52.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f61 ON htlr.pk_cont = f61.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f62 ON wht.pk_nocont = f62.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f71 ON htlr.pk_cont = f71.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f72 ON wht.pk_nocont = f72.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f81 ON htlr.pk_cont = f81.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f82 ON wht.pk_nocont = f82.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f91 ON htlr.pk_cont = f91.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f92 ON wht.pk_nocont = f92.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f101 ON htlr.pk_cont = f101.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f102 ON wht.pk_nocont = f102.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f111 ON htlr.pk_cont = f111.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f112 ON wht.pk_nocont = f112.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f121 ON htlr.pk_cont = f121.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f122 ON wht.pk_nocont = f122.pk_nocont
+WHERE
+	substr( jhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+	AND substr( jhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+	)
+WHERE
+	pk_project IN ( parameter ( 'pk_project' ) )
+	AND pk_org = ( parameter ( 'pk_org' ) )
+GROUP BY
+	code,
+	name,
+	nbmmny,
+	vbillcode,
+	vname,
+	jbr,
+	bm,
+	htqyje,
+	htdtje,
+	ljshk,
+	ljsfk,
+	sfk,
+	hj,
+	yi,
+	er,
+	san,
+	si,
+	wu,
+	liu,
+	qi,
+	ba,
+	jiu,
+	shi,
+	shiy,
+	shie,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+	) w ON cbxm.pk_costpro = w.pk_costpro --where edit.ieditdimension = '1'
+--where edit.iversion = '3'
+
+GROUP BY
+	cbxm.code,
+	cbxm.name,
+	mbc.nbmmny,
+	cbxm.pk_org,
+	cbxm.pk_group UNION ALL
+SELECT NULL
+	,
+	NULL,
+	NULL,
+	w.*
+FROM
+	fdcpm_bd_costpro cbxm
+	RIGHT JOIN (
+	SELECT
+		code,
+		name,
+		nbmmny,
+		vbillcode,
+		vname,
+		jbr,
+		bm,
+		htqyje,
+		htdtje,
+		ljshk,
+		ljsfk,
+		sfk,
+		hj,
+		yi,
+		er,
+		san,
+		si,
+		wu,
+		liu,
+		qi,
+		ba,
+		jiu,
+		shi,
+		shiy,
+		shie,
+		pk_project,
+		pk_org,
+		xmcode,
+		xmname,
+		pk_group,
+		pk_costpro
+	FROM
+		(
+		SELECT
+		CASE
+
+			WHEN
+				fk.bisnocont = 'N' THEN
+					o1.code ELSE o2.code
+				END code,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.name ELSE o2.name
+	END name,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.nbmmny ELSE o2.nbmmny
+	END nbmmny,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vbillcode ELSE wht.vbillcode
+	END vbillcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vname ELSE wht.vnocontname
+	END vname,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.jbr ELSE ry2.jbr
+	END jbr,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.bm ELSE ry2.bm
+	END bm,
+CASE
+
+	WHEN htlr.bisattach = 'N' THEN
+	htlr.norigcontsignmny * o1.bl
+	WHEN htlr.bisattach = 'Y' THEN
+	( htlr.norigcontsignmny + htlr.norigattachsignmny ) * o1.bl
+	WHEN fk.bisnocont = 'Y' THEN
+	wht.norignocontmny * o2.bl
+	END htqyje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	b.dt * o1.bl ELSE NULL
+	END htdtje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	c1.yf * o1.bl ELSE c2.yf * o2.bl
+	END ljshk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	j1.norigthismny * o1.bl ELSE j2.norigthismny * o2.bl
+	END ljsfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	d1.ljsf * o1.bl ELSE d2.ljsf * o2.bl
+	END sfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	e1.ljsf * o1.bl ELSE e2.ljsf * o2.bl
+	END hj,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f11.yi * o1.bl ELSE f12.yi * o2.bl
+	END yi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f21.mingxi * o1.bl ELSE f22.mingxi * o2.bl
+	END er,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f31.mingxi * o1.bl ELSE f32.mingxi * o2.bl
+	END san,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f41.mingxi * o1.bl ELSE f42.mingxi * o2.bl
+	END si,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f51.mingxi * o1.bl ELSE f52.mingxi * o2.bl
+	END wu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f61.mingxi * o1.bl ELSE f62.mingxi * o2.bl
+	END liu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f71.mingxi * o1.bl ELSE f72.mingxi * o2.bl
+	END qi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f81.mingxi * o1.bl ELSE f82.mingxi * o2.bl
+	END ba,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f91.mingxi * o1.bl ELSE f92.mingxi * o2.bl
+	END jiu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f101.mingxi * o1.bl ELSE f102.mingxi * o2.bl
+	END shi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f111.mingxi * o1.bl ELSE f112.mingxi * o2.bl
+	END shiy,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f121.mingxi * o1.bl ELSE f122.mingxi * o2.bl
+	END shie,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_project ELSE o2.pk_project
+	END pk_project,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_org ELSE o2.pk_org
+	END pk_org,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmcode ELSE o2.xmcode
+	END xmcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmname ELSE o2.xmname
+	END xmname,
+	fk.pk_group pk_group,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_costpro ELSE o2.pk_costpro
+	END pk_costpro
+FROM
+	fdcpm_pay_pay fk
+	LEFT JOIN fdcpm_co_cont htlr ON fk.pk_cont = htlr.pk_cont
+	AND fk.dr = 0
+	AND htlr.dr = 0
+	AND htlr.iversion = '0'
+	LEFT JOIN fdcpm_co_nocont wht ON fk.pk_nocont = wht.pk_nocont
+	AND wht.dr = 0
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_cont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '01' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	htlr.pk_cont pk_cont
+FROM
+	fdcpm_co_cont htlr
+	LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+	AND htlr.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont pk_cont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+		AND htlr.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) y1 ON htlr.pk_cont = y1.pk_cont
+	LEFT JOIN fdcpm_co_cont_plan plana ON htlr.pk_cont = plana.pk_cont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+WHERE
+	htlr.iversion = '0'
+	) o1 ON htlr.pk_cont = o1.pk_cont
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_nocont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '02' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	wht.pk_nocont pk_nocont
+FROM
+	fdcpm_co_nocont wht
+	LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+	AND wht.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont pk_nocont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+		AND wht.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) y1 ON wht.pk_nocont = y1.pk_nocont
+	LEFT JOIN fdcpm_co_nocont_plan plana ON wht.pk_nocont = plana.pk_nocont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+	) o2 ON wht.pk_nocont = o2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.*,
+	CASE
+
+			WHEN htlr.icontexecstatus = '3' THEN
+			nvl( htlr.norigsettlcostmny, 0 ) ELSE nvl(
+				(
+					nvl( htlr.norigcontsignmny, 0 ) + nvl( htlr.norigattachsignmny, 0 ) + nvl( htlr.norigcontchangeconfmny, 0 ) + nvl( htlr.norigcontchangeapplymny, 0 )
+				),
+				0
+			)
+		END AS dt
+	FROM
+		fdcpm_co_cont htlr
+	WHERE
+		htlr.dr = 0
+	) b ON htlr.pk_cont = b.pk_cont
+	AND htlr.dr = 0
+	LEFT JOIN fdcpm_pay_pay_acc jhxx ON fk.pk_pay = jhxx.pk_pay
+	AND jhxx.dr = 0
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN org_dept bm ON htlr.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND htlr.dr = 0
+		LEFT JOIN bd_psndoc ry ON htlr.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND htlr.dr = 0
+	) ry1 ON htlr.pk_cont = ry1.pk_cont
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN org_dept bm ON wht.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND wht.dr = 0
+		LEFT JOIN bd_psndoc ry ON wht.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND wht.dr = 0
+	) ry2 ON wht.pk_nocont = ry2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont cont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_apply fksq ON htlr.pk_cont = fksq.pk_cont
+		AND htlr.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		htlr.pk_cont
+	) c1 ON htlr.pk_cont = c1.cont
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont nocont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_apply fksq ON wht.pk_nocont = fksq.pk_nocont
+		AND wht.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		wht.pk_nocont
+	) c2 ON wht.pk_nocont = c2.nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_pay fk ON htlr.pk_cont = fk.pk_cont
+		AND fk.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) j1 ON htlr.pk_cont = j1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_pay fk ON wht.pk_nocont = fk.pk_nocont
+		AND fk.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) j2 ON wht.pk_nocont = j2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		fk.pk_cont pk_cont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont
+	) d1 ON htlr.pk_cont = d1.pk_cont
+	LEFT JOIN (
+	SELECT
+		fk.pk_nocont pk_nocont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont
+	) d2 ON wht.pk_nocont = d2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont,
+		fk.pk_cont
+	) e1 ON htlr.pk_cont = e1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont,
+		fk.pk_nocont
+	) e2 ON wht.pk_nocont = e2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f11 ON htlr.pk_cont = f11.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f12 ON wht.pk_nocont = f12.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f21 ON htlr.pk_cont = f21.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f22 ON wht.pk_nocont = f22.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f31 ON htlr.pk_cont = f31.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f32 ON wht.pk_nocont = f32.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f41 ON htlr.pk_cont = f41.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f42 ON wht.pk_nocont = f42.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f51 ON htlr.pk_cont = f51.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f52 ON wht.pk_nocont = f52.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f61 ON htlr.pk_cont = f61.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f62 ON wht.pk_nocont = f62.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f71 ON htlr.pk_cont = f71.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f72 ON wht.pk_nocont = f72.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f81 ON htlr.pk_cont = f81.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f82 ON wht.pk_nocont = f82.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f91 ON htlr.pk_cont = f91.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f92 ON wht.pk_nocont = f92.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f101 ON htlr.pk_cont = f101.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f102 ON wht.pk_nocont = f102.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f111 ON htlr.pk_cont = f111.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f112 ON wht.pk_nocont = f112.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f121 ON htlr.pk_cont = f121.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f122 ON wht.pk_nocont = f122.pk_nocont
+WHERE
+	substr( jhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+	AND substr( jhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+	)
+WHERE
+	pk_project IN ( parameter ( 'pk_project' ) )
+	AND pk_org = ( parameter ( 'pk_org' ) )
+GROUP BY
+	code,
+	name,
+	nbmmny,
+	vbillcode,
+	vname,
+	jbr,
+	bm,
+	htqyje,
+	htdtje,
+	ljshk,
+	ljsfk,
+	sfk,
+	hj,
+	yi,
+	er,
+	san,
+	si,
+	wu,
+	liu,
+	qi,
+	ba,
+	jiu,
+	shi,
+	shiy,
+	shie,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+	) w ON cbxm.pk_costpro = w.pk_costpro
+	) sa
+	) sd ON sd.ecode = cbxm.code --where edit.ieditdimension = '1'
+--where edit.iversion = '3'
+
+GROUP BY
+	sd.ecode,
+	sd.bcode,
+	cbxm.name,
+	mbc.nbmmny,
+	cbxm.pk_org,
+	cbxm.pk_group
+	) gh
+	) fd ON cbxm.code = fd.ecode --where edit.ieditdimension = '1'
+--where edit.iversion = '3'
+
+GROUP BY
+	fd.ecode,
+	fd.bcode,
+	cbxm.name,
+	mbc.nbmmny,
+	cbxm.pk_group UNION ALL
+SELECT
+	ad.ecode,
+	ad.bcode,
+	cbxm.name name,
+	round( mbc.nbmmny, 2 ) nbmmny,
+	NULL vname,
+	NULL vbillcode,
+	NULL jbr,
+	NULL bm,
+	sum( ad.htqyje ) htqyje,
+	sum( ad.htdtje ) htdtje,
+	sum( ad.ljshk ) ljshk,
+	sum( ad.ljsfk ) ljsfk,
+	sum( ad.sfk ) sfk,
+	sum( ad.hj ) hj,
+	sum( ad.yi ) yi,
+	sum( ad.er ) er,
+	sum( ad.san ) san,
+	sum( ad.si ) si,
+	sum( ad.wu ) wu,
+	sum( ad.liu ) liu,
+	sum( ad.qi ) qi,
+	sum( ad.ba ) ba,
+	sum( ad.jiu ) jiu,
+	sum( ad.shi ) shi,
+	sum( ad.shiy ) shiy,
+	sum( ad.shie ) shie,
+	NULL pk_project,
+	( parameter ( 'pk_org' ) ) pk_org,
+	NULL xmcode,
+	NULL xmname,
+	cbxm.pk_group pk_group,
+	NULL pk_costpro
+FROM
+	fdcpm_bd_costpro cbxm
+	LEFT JOIN (
+	SELECT
+		cbxm.pk_costpro,
+		sum( mbc.nbmmny ) nbmmny
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+		AND cbxm.dr = 0
+		AND mbc.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+		AND cbmx.dr = 0
+		LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbgj.dr = 0
+	WHERE
+		cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+	GROUP BY
+		cbxm.pk_costpro
+	) mbc ON mbc.pk_costpro = cbxm.pk_costpro
+	RIGHT JOIN (
+	SELECT
+		substr( ecode, 1, 4 ) ecode,
+		substr( bcode, 1, 4 ) bcode,
+		code,
+		name,
+		nbmmny,
+		vname,
+		vbillcode,
+		jbr,
+		bm,
+		htqyje,
+		htdtje,
+		ljshk,
+		ljsfk,
+		sfk,
+		hj,
+		yi,
+		er,
+		san,
+		si,
+		wu,
+		liu,
+		qi,
+		ba,
+		jiu,
+		shi,
+		shiy,
+		shie,
+		pk_project,
+		pk_org,
+		xmcode,
+		xmname,
+		pk_group,
+		pk_costpro
+	FROM
+		(
+		SELECT
+			cbxm.code acode,
+			cbxm.code bcode,
+			cbxm.code ecode,
+			cbxm.code,
+			cbxm.name,
+			mbc.nbmmny nbmmny,
+			NULL vname,
+			NULL vbillcode,
+			NULL jbr,
+			NULL bm,
+			sum( w.htqyje ) htqyje,
+			sum( w.htdtje ) htdtje,
+			sum( w.ljshk ) ljshk,
+			sum( w.ljsfk ) ljsfk,
+			sum( w.sfk ) sfk,
+			sum( w.hj ) hj,
+			sum( w.yi ) yi,
+			sum( w.er ) er,
+			sum( w.san ) san,
+			sum( w.si ) si,
+			sum( w.wu ) wu,
+			sum( w.liu ) liu,
+			sum( w.qi ) qi,
+			sum( w.ba ) ba,
+			sum( w.jiu ) jiu,
+			sum( w.shi ) shi,
+			sum( w.shiy ) shiy,
+			sum( w.shie ) shie,
+			NULL pk_project,
+			( parameter ( 'pk_org' ) ) pk_org,
+			NULL xmcode,
+			NULL xmname,
+			cbxm.pk_group pk_group,
+			NULL pk_costpro
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN (
+			SELECT
+				cbxm.pk_costpro,
+				sum( mbc.nbmmny ) nbmmny
+			FROM
+				fdcpm_bd_costpro cbxm
+				LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+				AND cbxm.dr = 0
+				AND mbc.dr = 0
+				LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+				AND cbmx.dr = 0
+				LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+				AND cbgj.dr = 0
+			WHERE
+				cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+			GROUP BY
+				cbxm.pk_costpro
+			) mbc ON mbc.pk_costpro = cbxm.pk_costpro
+			RIGHT JOIN (
+			SELECT
+				code,
+				name,
+				nbmmny,
+				vbillcode,
+				vname,
+				jbr,
+				bm,
+				htqyje,
+				htdtje,
+				ljshk,
+				ljsfk,
+				sfk,
+				hj,
+				yi,
+				er,
+				san,
+				si,
+				wu,
+				liu,
+				qi,
+				ba,
+				jiu,
+				shi,
+				shiy,
+				shie,
+				pk_project,
+				pk_org,
+				xmcode,
+				xmname,
+				pk_group,
+				pk_costpro
+			FROM
+				(
+				SELECT
+				CASE
+
+					WHEN
+						fk.bisnocont = 'N' THEN
+							o1.code ELSE o2.code
+						END code,
+	CASE
+
+			WHEN fk.bisnocont = 'N' THEN
+			o1.name ELSE o2.name
+			END name,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.nbmmny ELSE o2.nbmmny
+	END nbmmny,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vbillcode ELSE wht.vbillcode
+	END vbillcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vname ELSE wht.vnocontname
+	END vname,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.jbr ELSE ry2.jbr
+	END jbr,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.bm ELSE ry2.bm
+	END bm,
+CASE
+
+	WHEN htlr.bisattach = 'N' THEN
+	htlr.norigcontsignmny * o1.bl
+	WHEN htlr.bisattach = 'Y' THEN
+	( htlr.norigcontsignmny + htlr.norigattachsignmny ) * o1.bl
+	WHEN fk.bisnocont = 'Y' THEN
+	wht.norignocontmny * o2.bl
+	END htqyje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	b.dt * o1.bl ELSE NULL
+	END htdtje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	c1.yf * o1.bl ELSE c2.yf * o2.bl
+	END ljshk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	j1.norigthismny * o1.bl ELSE j2.norigthismny * o2.bl
+	END ljsfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	d1.ljsf * o1.bl ELSE d2.ljsf * o2.bl
+	END sfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	e1.ljsf * o1.bl ELSE e2.ljsf * o2.bl
+	END hj,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f11.yi * o1.bl ELSE f12.yi * o2.bl
+	END yi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f21.mingxi * o1.bl ELSE f22.mingxi * o2.bl
+	END er,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f31.mingxi * o1.bl ELSE f32.mingxi * o2.bl
+	END san,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f41.mingxi * o1.bl ELSE f42.mingxi * o2.bl
+	END si,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f51.mingxi * o1.bl ELSE f52.mingxi * o2.bl
+	END wu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f61.mingxi * o1.bl ELSE f62.mingxi * o2.bl
+	END liu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f71.mingxi * o1.bl ELSE f72.mingxi * o2.bl
+	END qi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f81.mingxi * o1.bl ELSE f82.mingxi * o2.bl
+	END ba,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f91.mingxi * o1.bl ELSE f92.mingxi * o2.bl
+	END jiu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f101.mingxi * o1.bl ELSE f102.mingxi * o2.bl
+	END shi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f111.mingxi * o1.bl ELSE f112.mingxi * o2.bl
+	END shiy,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f121.mingxi * o1.bl ELSE f122.mingxi * o2.bl
+	END shie,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_project ELSE o2.pk_project
+	END pk_project,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_org ELSE o2.pk_org
+	END pk_org,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmcode ELSE o2.xmcode
+	END xmcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmname ELSE o2.xmname
+	END xmname,
+	fk.pk_group pk_group,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_costpro ELSE o2.pk_costpro
+	END pk_costpro
+FROM
+	fdcpm_pay_pay fk
+	LEFT JOIN fdcpm_co_cont htlr ON fk.pk_cont = htlr.pk_cont
+	AND fk.dr = 0
+	AND htlr.dr = 0
+	AND htlr.iversion = '0'
+	LEFT JOIN fdcpm_co_nocont wht ON fk.pk_nocont = wht.pk_nocont
+	AND wht.dr = 0
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_cont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '01' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	htlr.pk_cont pk_cont
+FROM
+	fdcpm_co_cont htlr
+	LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+	AND htlr.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont pk_cont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+		AND htlr.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) y1 ON htlr.pk_cont = y1.pk_cont
+	LEFT JOIN fdcpm_co_cont_plan plana ON htlr.pk_cont = plana.pk_cont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+WHERE
+	htlr.iversion = '0'
+	) o1 ON htlr.pk_cont = o1.pk_cont
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_nocont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '02' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	wht.pk_nocont pk_nocont
+FROM
+	fdcpm_co_nocont wht
+	LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+	AND wht.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont pk_nocont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+		AND wht.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) y1 ON wht.pk_nocont = y1.pk_nocont
+	LEFT JOIN fdcpm_co_nocont_plan plana ON wht.pk_nocont = plana.pk_nocont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+	) o2 ON wht.pk_nocont = o2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.*,
+	CASE
+
+			WHEN htlr.icontexecstatus = '3' THEN
+			nvl( htlr.norigsettlcostmny, 0 ) ELSE nvl(
+				(
+					nvl( htlr.norigcontsignmny, 0 ) + nvl( htlr.norigattachsignmny, 0 ) + nvl( htlr.norigcontchangeconfmny, 0 ) + nvl( htlr.norigcontchangeapplymny, 0 )
+				),
+				0
+			)
+		END AS dt
+	FROM
+		fdcpm_co_cont htlr
+	WHERE
+		htlr.dr = 0
+	) b ON htlr.pk_cont = b.pk_cont
+	AND htlr.dr = 0
+	LEFT JOIN fdcpm_pay_pay_acc jhxx ON fk.pk_pay = jhxx.pk_pay
+	AND jhxx.dr = 0
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN org_dept bm ON htlr.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND htlr.dr = 0
+		LEFT JOIN bd_psndoc ry ON htlr.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND htlr.dr = 0
+	) ry1 ON htlr.pk_cont = ry1.pk_cont
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN org_dept bm ON wht.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND wht.dr = 0
+		LEFT JOIN bd_psndoc ry ON wht.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND wht.dr = 0
+	) ry2 ON wht.pk_nocont = ry2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont cont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_apply fksq ON htlr.pk_cont = fksq.pk_cont
+		AND htlr.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		htlr.pk_cont
+	) c1 ON htlr.pk_cont = c1.cont
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont nocont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_apply fksq ON wht.pk_nocont = fksq.pk_nocont
+		AND wht.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		wht.pk_nocont
+	) c2 ON wht.pk_nocont = c2.nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_pay fk ON htlr.pk_cont = fk.pk_cont
+		AND fk.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) j1 ON htlr.pk_cont = j1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_pay fk ON wht.pk_nocont = fk.pk_nocont
+		AND fk.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) j2 ON wht.pk_nocont = j2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		fk.pk_cont pk_cont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont
+	) d1 ON htlr.pk_cont = d1.pk_cont
+	LEFT JOIN (
+	SELECT
+		fk.pk_nocont pk_nocont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont
+	) d2 ON wht.pk_nocont = d2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont,
+		fk.pk_cont
+	) e1 ON htlr.pk_cont = e1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont,
+		fk.pk_nocont
+	) e2 ON wht.pk_nocont = e2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f11 ON htlr.pk_cont = f11.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f12 ON wht.pk_nocont = f12.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f21 ON htlr.pk_cont = f21.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f22 ON wht.pk_nocont = f22.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f31 ON htlr.pk_cont = f31.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f32 ON wht.pk_nocont = f32.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f41 ON htlr.pk_cont = f41.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f42 ON wht.pk_nocont = f42.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f51 ON htlr.pk_cont = f51.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f52 ON wht.pk_nocont = f52.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f61 ON htlr.pk_cont = f61.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f62 ON wht.pk_nocont = f62.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f71 ON htlr.pk_cont = f71.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f72 ON wht.pk_nocont = f72.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f81 ON htlr.pk_cont = f81.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f82 ON wht.pk_nocont = f82.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f91 ON htlr.pk_cont = f91.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f92 ON wht.pk_nocont = f92.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f101 ON htlr.pk_cont = f101.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f102 ON wht.pk_nocont = f102.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f111 ON htlr.pk_cont = f111.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f112 ON wht.pk_nocont = f112.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f121 ON htlr.pk_cont = f121.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f122 ON wht.pk_nocont = f122.pk_nocont
+WHERE
+	substr( jhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+	AND substr( jhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+	)
+WHERE
+	pk_project IN ( parameter ( 'pk_project' ) )
+	AND pk_org = ( parameter ( 'pk_org' ) )
+GROUP BY
+	code,
+	name,
+	nbmmny,
+	vbillcode,
+	vname,
+	jbr,
+	bm,
+	htqyje,
+	htdtje,
+	ljshk,
+	ljsfk,
+	sfk,
+	hj,
+	yi,
+	er,
+	san,
+	si,
+	wu,
+	liu,
+	qi,
+	ba,
+	jiu,
+	shi,
+	shiy,
+	shie,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+	) w ON cbxm.pk_costpro = w.pk_costpro --where edit.ieditdimension = '1'
+--where edit.iversion = '3'
+--where edit.iversion = '3'
+
+GROUP BY
+	cbxm.code,
+	cbxm.name,
+	mbc.nbmmny,
+	cbxm.pk_org,
+	cbxm.pk_group UNION ALL
+SELECT NULL
+	,
+	NULL,
+	NULL,
+	w.*
+FROM
+	fdcpm_bd_costpro cbxm
+	RIGHT JOIN (
+	SELECT
+		code,
+		name,
+		nbmmny,
+		vbillcode,
+		vname,
+		jbr,
+		bm,
+		htqyje,
+		htdtje,
+		ljshk,
+		ljsfk,
+		sfk,
+		hj,
+		yi,
+		er,
+		san,
+		si,
+		wu,
+		liu,
+		qi,
+		ba,
+		jiu,
+		shi,
+		shiy,
+		shie,
+		pk_project,
+		pk_org,
+		xmcode,
+		xmname,
+		pk_group,
+		pk_costpro
+	FROM
+		(
+		SELECT
+		CASE
+
+			WHEN
+				fk.bisnocont = 'N' THEN
+					o1.code ELSE o2.code
+				END code,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.name ELSE o2.name
+	END name,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.nbmmny ELSE o2.nbmmny
+	END nbmmny,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vbillcode ELSE wht.vbillcode
+	END vbillcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vname ELSE wht.vnocontname
+	END vname,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.jbr ELSE ry2.jbr
+	END jbr,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.bm ELSE ry2.bm
+	END bm,
+CASE
+
+	WHEN htlr.bisattach = 'N' THEN
+	htlr.norigcontsignmny * o1.bl
+	WHEN htlr.bisattach = 'Y' THEN
+	( htlr.norigcontsignmny + htlr.norigattachsignmny ) * o1.bl
+	WHEN fk.bisnocont = 'Y' THEN
+	wht.norignocontmny * o2.bl
+	END htqyje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	b.dt * o1.bl ELSE NULL
+	END htdtje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	c1.yf * o1.bl ELSE c2.yf * o2.bl
+	END ljshk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	j1.norigthismny * o1.bl ELSE j2.norigthismny * o2.bl
+	END ljsfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	d1.ljsf * o1.bl ELSE d2.ljsf * o2.bl
+	END sfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	e1.ljsf * o1.bl ELSE e2.ljsf * o2.bl
+	END hj,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f11.yi * o1.bl ELSE f12.yi * o2.bl
+	END yi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f21.mingxi * o1.bl ELSE f22.mingxi * o2.bl
+	END er,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f31.mingxi * o1.bl ELSE f32.mingxi * o2.bl
+	END san,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f41.mingxi * o1.bl ELSE f42.mingxi * o2.bl
+	END si,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f51.mingxi * o1.bl ELSE f52.mingxi * o2.bl
+	END wu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f61.mingxi * o1.bl ELSE f62.mingxi * o2.bl
+	END liu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f71.mingxi * o1.bl ELSE f72.mingxi * o2.bl
+	END qi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f81.mingxi * o1.bl ELSE f82.mingxi * o2.bl
+	END ba,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f91.mingxi * o1.bl ELSE f92.mingxi * o2.bl
+	END jiu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f101.mingxi * o1.bl ELSE f102.mingxi * o2.bl
+	END shi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f111.mingxi * o1.bl ELSE f112.mingxi * o2.bl
+	END shiy,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f121.mingxi * o1.bl ELSE f122.mingxi * o2.bl
+	END shie,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_project ELSE o2.pk_project
+	END pk_project,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_org ELSE o2.pk_org
+	END pk_org,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmcode ELSE o2.xmcode
+	END xmcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmname ELSE o2.xmname
+	END xmname,
+	fk.pk_group pk_group,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_costpro ELSE o2.pk_costpro
+	END pk_costpro
+FROM
+	fdcpm_pay_pay fk
+	LEFT JOIN fdcpm_co_cont htlr ON fk.pk_cont = htlr.pk_cont
+	AND fk.dr = 0
+	AND htlr.dr = 0
+	AND htlr.iversion = '0'
+	LEFT JOIN fdcpm_co_nocont wht ON fk.pk_nocont = wht.pk_nocont
+	AND wht.dr = 0
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_cont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '01' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	htlr.pk_cont pk_cont
+FROM
+	fdcpm_co_cont htlr
+	LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+	AND htlr.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont pk_cont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+		AND htlr.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) y1 ON htlr.pk_cont = y1.pk_cont
+	LEFT JOIN fdcpm_co_cont_plan plana ON htlr.pk_cont = plana.pk_cont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+WHERE
+	htlr.iversion = '0'
+	) o1 ON htlr.pk_cont = o1.pk_cont
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_nocont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '02' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	wht.pk_nocont pk_nocont
+FROM
+	fdcpm_co_nocont wht
+	LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+	AND wht.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont pk_nocont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+		AND wht.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) y1 ON wht.pk_nocont = y1.pk_nocont
+	LEFT JOIN fdcpm_co_nocont_plan plana ON wht.pk_nocont = plana.pk_nocont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+	) o2 ON wht.pk_nocont = o2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.*,
+	CASE
+
+			WHEN htlr.icontexecstatus = '3' THEN
+			nvl( htlr.norigsettlcostmny, 0 ) ELSE nvl(
+				(
+					nvl( htlr.norigcontsignmny, 0 ) + nvl( htlr.norigattachsignmny, 0 ) + nvl( htlr.norigcontchangeconfmny, 0 ) + nvl( htlr.norigcontchangeapplymny, 0 )
+				),
+				0
+			)
+		END AS dt
+	FROM
+		fdcpm_co_cont htlr
+	WHERE
+		htlr.dr = 0
+	) b ON htlr.pk_cont = b.pk_cont
+	AND htlr.dr = 0
+	LEFT JOIN fdcpm_pay_pay_acc jhxx ON fk.pk_pay = jhxx.pk_pay
+	AND jhxx.dr = 0
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN org_dept bm ON htlr.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND htlr.dr = 0
+		LEFT JOIN bd_psndoc ry ON htlr.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND htlr.dr = 0
+	) ry1 ON htlr.pk_cont = ry1.pk_cont
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN org_dept bm ON wht.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND wht.dr = 0
+		LEFT JOIN bd_psndoc ry ON wht.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND wht.dr = 0
+	) ry2 ON wht.pk_nocont = ry2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont cont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_apply fksq ON htlr.pk_cont = fksq.pk_cont
+		AND htlr.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		htlr.pk_cont
+	) c1 ON htlr.pk_cont = c1.cont
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont nocont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_apply fksq ON wht.pk_nocont = fksq.pk_nocont
+		AND wht.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		wht.pk_nocont
+	) c2 ON wht.pk_nocont = c2.nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_pay fk ON htlr.pk_cont = fk.pk_cont
+		AND fk.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) j1 ON htlr.pk_cont = j1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_pay fk ON wht.pk_nocont = fk.pk_nocont
+		AND fk.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) j2 ON wht.pk_nocont = j2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		fk.pk_cont pk_cont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont
+	) d1 ON htlr.pk_cont = d1.pk_cont
+	LEFT JOIN (
+	SELECT
+		fk.pk_nocont pk_nocont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont
+	) d2 ON wht.pk_nocont = d2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont,
+		fk.pk_cont
+	) e1 ON htlr.pk_cont = e1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont,
+		fk.pk_nocont
+	) e2 ON wht.pk_nocont = e2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f11 ON htlr.pk_cont = f11.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f12 ON wht.pk_nocont = f12.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f21 ON htlr.pk_cont = f21.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f22 ON wht.pk_nocont = f22.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f31 ON htlr.pk_cont = f31.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f32 ON wht.pk_nocont = f32.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f41 ON htlr.pk_cont = f41.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f42 ON wht.pk_nocont = f42.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f51 ON htlr.pk_cont = f51.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f52 ON wht.pk_nocont = f52.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f61 ON htlr.pk_cont = f61.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f62 ON wht.pk_nocont = f62.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f71 ON htlr.pk_cont = f71.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f72 ON wht.pk_nocont = f72.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f81 ON htlr.pk_cont = f81.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f82 ON wht.pk_nocont = f82.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f91 ON htlr.pk_cont = f91.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f92 ON wht.pk_nocont = f92.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f101 ON htlr.pk_cont = f101.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f102 ON wht.pk_nocont = f102.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f111 ON htlr.pk_cont = f111.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f112 ON wht.pk_nocont = f112.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f121 ON htlr.pk_cont = f121.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f122 ON wht.pk_nocont = f122.pk_nocont
+WHERE
+	substr( jhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+	AND substr( jhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+	)
+WHERE
+	pk_project IN ( parameter ( 'pk_project' ) )
+	AND pk_org = ( parameter ( 'pk_org' ) )
+GROUP BY
+	code,
+	name,
+	nbmmny,
+	vbillcode,
+	vname,
+	jbr,
+	bm,
+	htqyje,
+	htdtje,
+	ljshk,
+	ljsfk,
+	sfk,
+	hj,
+	yi,
+	er,
+	san,
+	si,
+	wu,
+	liu,
+	qi,
+	ba,
+	jiu,
+	shi,
+	shiy,
+	shie,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+	) w ON cbxm.pk_costpro = w.pk_costpro
+	) sds
+	) ad ON ad.ecode = cbxm.code --where /*edit.iversion = '3' and*/
+
+	WHERE--edit.ieditdimension = '1' and
+	length( ad.bcode ) <> 2
+GROUP BY
+	ad.ecode,
+	ad.bcode,
+	cbxm.name,
+	mbc.nbmmny,
+	cbxm.pk_group UNION ALL
+SELECT
+	acode,
+	code,
+	name,
+	nbmmny,
+	vname,
+	vbillcode,
+	jbr,
+	bm,
+	sum( htqyje ) htqyje,
+	sum( htdtje ) htdtje,
+	sum( ljshk ) ljshk,
+	sum( ljsfk ) ljsfk,
+	sum( sfk ) sfk,
+	sum( hj ) hj,
+	sum( yi ) yi,
+	sum( er ) er,
+	sum( san ) san,
+	sum( si ) si,
+	sum( wu ) wu,
+	sum( liu ) liu,
+	sum( qi ) qi,
+	sum( ba ) ba,
+	sum( jiu ) jiu,
+	sum( shi ) shi,
+	sum( shiy ) shiy,
+	sum( shie ) shie,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+FROM
+	(
+	SELECT
+		acode,
+		code,
+		name,
+		nbmmny,
+		vname,
+		vbillcode,
+		jbr,
+		bm,
+		htqyje,
+		htdtje,
+		ljshk,
+		ljsfk,
+		sfk,
+		hj,
+		yi,
+		er,
+		san,
+		si,
+		wu,
+		liu,
+		qi,
+		ba,
+		jiu,
+		shi,
+		shiy,
+		shie,
+		pk_project,
+		pk_org,
+		xmcode,
+		xmname,
+		pk_group,
+		pk_costpro
+	FROM
+		(
+		SELECT
+			cbxm.code acode,
+			cbxm.code,
+			cbxm.name,
+			mbc.nbmmny nbmmny,
+			NULL vname,
+			NULL vbillcode,
+			NULL jbr,
+			NULL bm,
+			sum( w.htqyje ) htqyje,
+			sum( w.htdtje ) htdtje,
+			sum( w.ljshk ) ljshk,
+			sum( w.ljsfk ) ljsfk,
+			sum( w.sfk ) sfk,
+			sum( w.hj ) hj,
+			sum( w.yi ) yi,
+			sum( w.er ) er,
+			sum( w.san ) san,
+			sum( w.si ) si,
+			sum( w.wu ) wu,
+			sum( w.liu ) liu,
+			sum( w.qi ) qi,
+			sum( w.ba ) ba,
+			sum( w.jiu ) jiu,
+			sum( w.shi ) shi,
+			sum( w.shiy ) shiy,
+			sum( w.shie ) shie,
+			NULL pk_project,
+			( parameter ( 'pk_org' ) ) pk_org,
+			NULL xmcode,
+			NULL xmname,
+			cbxm.pk_group pk_group,
+			NULL pk_costpro
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN (
+			SELECT
+				cbxm.pk_costpro,
+				sum( mbc.nbmmny ) nbmmny
+			FROM
+				fdcpm_bd_costpro cbxm
+				LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+				AND cbxm.dr = 0
+				AND mbc.dr = 0
+				LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+				AND cbmx.dr = 0
+				LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+				AND cbgj.dr = 0
+			WHERE
+				cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+			GROUP BY
+				cbxm.pk_costpro
+			) mbc ON mbc.pk_costpro = cbxm.pk_costpro
+			RIGHT JOIN (
+			SELECT
+				code,
+				name,
+				nbmmny,
+				vbillcode,
+				vname,
+				jbr,
+				bm,
+				htqyje,
+				htdtje,
+				ljshk,
+				ljsfk,
+				sfk,
+				hj,
+				yi,
+				er,
+				san,
+				si,
+				wu,
+				liu,
+				qi,
+				ba,
+				jiu,
+				shi,
+				shiy,
+				shie,
+				pk_project,
+				pk_org,
+				xmcode,
+				xmname,
+				pk_group,
+				pk_costpro
+			FROM
+				(
+				SELECT
+				CASE
+
+					WHEN
+						fk.bisnocont = 'N' THEN
+							o1.code ELSE o2.code
+						END code,
+	CASE
+
+			WHEN fk.bisnocont = 'N' THEN
+			o1.name ELSE o2.name
+			END name,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.nbmmny ELSE o2.nbmmny
+	END nbmmny,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vbillcode ELSE wht.vbillcode
+	END vbillcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vname ELSE wht.vnocontname
+	END vname,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.jbr ELSE ry2.jbr
+	END jbr,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.bm ELSE ry2.bm
+	END bm,
+CASE
+
+	WHEN htlr.bisattach = 'N' THEN
+	htlr.norigcontsignmny * o1.bl
+	WHEN htlr.bisattach = 'Y' THEN
+	( htlr.norigcontsignmny + htlr.norigattachsignmny ) * o1.bl
+	WHEN fk.bisnocont = 'Y' THEN
+	wht.norignocontmny * o2.bl
+	END htqyje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	b.dt * o1.bl ELSE NULL
+	END htdtje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	c1.yf * o1.bl ELSE c2.yf * o2.bl
+	END ljshk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	j1.norigthismny * o1.bl ELSE j2.norigthismny * o2.bl
+	END ljsfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	d1.ljsf * o1.bl ELSE d2.ljsf * o2.bl
+	END sfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	e1.ljsf * o1.bl ELSE e2.ljsf * o2.bl
+	END hj,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f11.yi * o1.bl ELSE f12.yi * o2.bl
+	END yi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f21.mingxi * o1.bl ELSE f22.mingxi * o2.bl
+	END er,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f31.mingxi * o1.bl ELSE f32.mingxi * o2.bl
+	END san,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f41.mingxi * o1.bl ELSE f42.mingxi * o2.bl
+	END si,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f51.mingxi * o1.bl ELSE f52.mingxi * o2.bl
+	END wu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f61.mingxi * o1.bl ELSE f62.mingxi * o2.bl
+	END liu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f71.mingxi * o1.bl ELSE f72.mingxi * o2.bl
+	END qi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f81.mingxi * o1.bl ELSE f82.mingxi * o2.bl
+	END ba,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f91.mingxi * o1.bl ELSE f92.mingxi * o2.bl
+	END jiu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f101.mingxi * o1.bl ELSE f102.mingxi * o2.bl
+	END shi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f111.mingxi * o1.bl ELSE f112.mingxi * o2.bl
+	END shiy,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f121.mingxi * o1.bl ELSE f122.mingxi * o2.bl
+	END shie,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_project ELSE o2.pk_project
+	END pk_project,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_org ELSE o2.pk_org
+	END pk_org,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmcode ELSE o2.xmcode
+	END xmcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmname ELSE o2.xmname
+	END xmname,
+	fk.pk_group pk_group,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_costpro ELSE o2.pk_costpro
+	END pk_costpro
+FROM
+	fdcpm_pay_pay fk
+	LEFT JOIN fdcpm_co_cont htlr ON fk.pk_cont = htlr.pk_cont
+	AND fk.dr = 0
+	AND htlr.dr = 0
+	AND htlr.iversion = '0'
+	LEFT JOIN fdcpm_co_nocont wht ON fk.pk_nocont = wht.pk_nocont
+	AND wht.dr = 0
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_cont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '01' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	htlr.pk_cont pk_cont
+FROM
+	fdcpm_co_cont htlr
+	LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+	AND htlr.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont pk_cont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+		AND htlr.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) y1 ON htlr.pk_cont = y1.pk_cont
+	LEFT JOIN fdcpm_co_cont_plan plana ON htlr.pk_cont = plana.pk_cont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+WHERE
+	htlr.iversion = '0'
+	) o1 ON htlr.pk_cont = o1.pk_cont
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_nocont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '02' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	cbmx.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	wht.pk_nocont pk_nocont
+FROM
+	fdcpm_co_nocont wht
+	LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+	AND wht.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont pk_nocont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+		AND wht.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) y1 ON wht.pk_nocont = y1.pk_nocont
+	LEFT JOIN fdcpm_co_nocont_plan plana ON wht.pk_nocont = plana.pk_nocont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+	) o2 ON wht.pk_nocont = o2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.*,
+	CASE
+
+			WHEN htlr.icontexecstatus = '3' THEN
+			nvl( htlr.norigsettlcostmny, 0 ) ELSE nvl(
+				(
+					nvl( htlr.norigcontsignmny, 0 ) + nvl( htlr.norigattachsignmny, 0 ) + nvl( htlr.norigcontchangeconfmny, 0 ) + nvl( htlr.norigcontchangeapplymny, 0 )
+				),
+				0
+			)
+		END AS dt
+	FROM
+		fdcpm_co_cont htlr
+	WHERE
+		htlr.dr = 0
+	) b ON htlr.pk_cont = b.pk_cont
+	AND htlr.dr = 0
+	LEFT JOIN fdcpm_pay_pay_acc jhxx ON fk.pk_pay = jhxx.pk_pay
+	AND jhxx.dr = 0
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN org_dept bm ON htlr.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND htlr.dr = 0
+		LEFT JOIN bd_psndoc ry ON htlr.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND htlr.dr = 0
+	) ry1 ON htlr.pk_cont = ry1.pk_cont
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN org_dept bm ON wht.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND wht.dr = 0
+		LEFT JOIN bd_psndoc ry ON wht.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND wht.dr = 0
+	) ry2 ON wht.pk_nocont = ry2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont cont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_apply fksq ON htlr.pk_cont = fksq.pk_cont
+		AND htlr.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		htlr.pk_cont
+	) c1 ON htlr.pk_cont = c1.cont
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont nocont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_apply fksq ON wht.pk_nocont = fksq.pk_nocont
+		AND wht.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		wht.pk_nocont
+	) c2 ON wht.pk_nocont = c2.nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_pay fk ON htlr.pk_cont = fk.pk_cont
+		AND fk.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) j1 ON htlr.pk_cont = j1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_pay fk ON wht.pk_nocont = fk.pk_nocont
+		AND fk.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) j2 ON wht.pk_nocont = j2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		fk.pk_cont pk_cont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont
+	) d1 ON htlr.pk_cont = d1.pk_cont
+	LEFT JOIN (
+	SELECT
+		fk.pk_nocont pk_nocont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont
+	) d2 ON wht.pk_nocont = d2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont,
+		fk.pk_cont
+	) e1 ON htlr.pk_cont = e1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont,
+		fk.pk_nocont
+	) e2 ON wht.pk_nocont = e2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f11 ON htlr.pk_cont = f11.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f12 ON wht.pk_nocont = f12.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f21 ON htlr.pk_cont = f21.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f22 ON wht.pk_nocont = f22.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f31 ON htlr.pk_cont = f31.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f32 ON wht.pk_nocont = f32.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f41 ON htlr.pk_cont = f41.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f42 ON wht.pk_nocont = f42.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f51 ON htlr.pk_cont = f51.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f52 ON wht.pk_nocont = f52.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f61 ON htlr.pk_cont = f61.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f62 ON wht.pk_nocont = f62.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f71 ON htlr.pk_cont = f71.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f72 ON wht.pk_nocont = f72.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f81 ON htlr.pk_cont = f81.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f82 ON wht.pk_nocont = f82.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f91 ON htlr.pk_cont = f91.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f92 ON wht.pk_nocont = f92.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f101 ON htlr.pk_cont = f101.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f102 ON wht.pk_nocont = f102.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f111 ON htlr.pk_cont = f111.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f112 ON wht.pk_nocont = f112.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f121 ON htlr.pk_cont = f121.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f122 ON wht.pk_nocont = f122.pk_nocont
+WHERE
+	substr( jhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+	AND substr( jhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+	)
+WHERE
+	pk_project IN ( parameter ( 'pk_project' ) )
+	AND pk_org = ( parameter ( 'pk_org' ) )
+GROUP BY
+	code,
+	name,
+	nbmmny,
+	vbillcode,
+	vname,
+	jbr,
+	bm,
+	htqyje,
+	htdtje,
+	ljshk,
+	ljsfk,
+	sfk,
+	hj,
+	yi,
+	er,
+	san,
+	si,
+	wu,
+	liu,
+	qi,
+	ba,
+	jiu,
+	shi,
+	shiy,
+	shie,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+	) w ON cbxm.pk_costpro = w.pk_costpro --where edit.ieditdimension = '1'
+--where edit.iversion = '3'
+
+GROUP BY
+	cbxm.code,
+	cbxm.name,
+	mbc.nbmmny,
+	cbxm.pk_group UNION ALL
+SELECT NULL
+	,
+	w.*
+FROM
+	fdcpm_bd_costpro cbxm
+	RIGHT JOIN (
+	SELECT
+		code,
+		name,
+		nbmmny,
+		vbillcode,
+		vname,
+		jbr,
+		bm,
+		htqyje,
+		htdtje,
+		ljshk,
+		ljsfk,
+		sfk,
+		hj,
+		yi,
+		er,
+		san,
+		si,
+		wu,
+		liu,
+		qi,
+		ba,
+		jiu,
+		shi,
+		shiy,
+		shie,
+		pk_project,
+		pk_org,
+		xmcode,
+		xmname,
+		pk_group,
+		pk_costpro
+	FROM
+		(
+		SELECT
+		CASE
+
+			WHEN
+				fk.bisnocont = 'N' THEN
+					o1.code ELSE o2.code
+				END code,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.name ELSE o2.name
+	END name,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.nbmmny ELSE o2.nbmmny
+	END nbmmny,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vbillcode ELSE wht.vbillcode
+	END vbillcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	htlr.vname ELSE wht.vnocontname
+	END vname,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.jbr ELSE ry2.jbr
+	END jbr,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	ry1.bm ELSE ry2.bm
+	END bm,
+CASE
+
+	WHEN htlr.bisattach = 'N' THEN
+	htlr.norigcontsignmny * o1.bl
+	WHEN htlr.bisattach = 'Y' THEN
+	( htlr.norigcontsignmny + htlr.norigattachsignmny ) * o1.bl
+	WHEN fk.bisnocont = 'Y' THEN
+	wht.norignocontmny * o2.bl
+	END htqyje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	b.dt * o1.bl ELSE NULL
+	END htdtje,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	c1.yf * o1.bl ELSE c2.yf * o2.bl
+	END ljshk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	j1.norigthismny * o1.bl ELSE j2.norigthismny * o2.bl
+	END ljsfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	d1.ljsf * o1.bl ELSE d2.ljsf * o2.bl
+	END sfk,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	e1.ljsf * o1.bl ELSE e2.ljsf * o2.bl
+	END hj,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f11.yi * o1.bl ELSE f12.yi * o2.bl
+	END yi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f21.mingxi * o1.bl ELSE f22.mingxi * o2.bl
+	END er,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f31.mingxi * o1.bl ELSE f32.mingxi * o2.bl
+	END san,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f41.mingxi * o1.bl ELSE f42.mingxi * o2.bl
+	END si,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f51.mingxi * o1.bl ELSE f52.mingxi * o2.bl
+	END wu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f61.mingxi * o1.bl ELSE f62.mingxi * o2.bl
+	END liu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f71.mingxi * o1.bl ELSE f72.mingxi * o2.bl
+	END qi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f81.mingxi * o1.bl ELSE f82.mingxi * o2.bl
+	END ba,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f91.mingxi * o1.bl ELSE f92.mingxi * o2.bl
+	END jiu,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f101.mingxi * o1.bl ELSE f102.mingxi * o2.bl
+	END shi,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f111.mingxi * o1.bl ELSE f112.mingxi * o2.bl
+	END shiy,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	f121.mingxi * o1.bl ELSE f122.mingxi * o2.bl
+	END shie,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_project ELSE o2.pk_project
+	END pk_project,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_org ELSE o2.pk_org
+	END pk_org,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmcode ELSE o2.xmcode
+	END xmcode,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.xmname ELSE o2.xmname
+	END xmname,
+	fk.pk_group pk_group,
+CASE
+
+	WHEN fk.bisnocont = 'N' THEN
+	o1.pk_costpro ELSE o2.pk_costpro
+	END pk_costpro
+FROM
+	fdcpm_pay_pay fk
+	LEFT JOIN fdcpm_co_cont htlr ON fk.pk_cont = htlr.pk_cont
+	AND fk.dr = 0
+	AND htlr.dr = 0
+	AND htlr.iversion = '0'
+	LEFT JOIN fdcpm_co_nocont wht ON fk.pk_nocont = wht.pk_nocont
+	AND wht.dr = 0
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_cont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '01' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	xm.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	htlr.pk_cont pk_cont
+FROM
+	fdcpm_co_cont htlr
+	LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+	AND htlr.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont pk_cont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_cost_accum cbgj ON htlr.vbillcode = cbgj.vbusicode
+		AND htlr.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) y1 ON htlr.pk_cont = y1.pk_cont
+	LEFT JOIN fdcpm_co_cont_plan plana ON htlr.pk_cont = plana.pk_cont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+WHERE
+	htlr.iversion = '0'
+	) o1 ON htlr.pk_cont = o1.pk_cont
+	LEFT JOIN (
+	SELECT
+		cbxm.code code,
+		cbxm.name name,
+		round( mbc.nbmmny, 2 ) nbmmny,
+		NULL s,
+		NULL bl,
+		NULL pk_org,
+		NULL xmcode,
+		NULL xmname,
+		NULL pk_project,
+		NULL pk_costpro,
+		NULL pk_nocont
+	FROM
+		fdcpm_bd_costpro cbxm
+		LEFT JOIN (
+		SELECT
+			cbxm.pk_costpro,
+			sum( mbc.nbmmny ) nbmmny
+		FROM
+			fdcpm_bd_costpro cbxm
+			LEFT JOIN fdcpm_bm_project_b mbc ON cbxm.pk_costpro = mbc.pk_costpro
+			AND cbxm.dr = 0
+			AND mbc.dr = 0
+			LEFT JOIN fdcpm_cost_accum_b cbmx ON cbxm.pk_costpro = cbmx.pk_costpro
+			AND cbmx.dr = 0
+			LEFT JOIN fdcpm_cost_accum cbgj ON cbmx.pk_accum = cbgj.pk_accum
+			AND cbgj.dr = 0
+		WHERE
+			cbgj.pk_project IN ( parameter ( 'pk_project' ) )
+		GROUP BY
+			cbxm.pk_costpro
+		) mbc ON mbc.pk_costpro = cbxm.pk_costpro --where edit.iversion = '3'
+	UNION
+	SELECT
+		cbxm.code || '02' xmcode,
+		contp.vname hname,
+		contp.nbasecontplanmny norigcontplanmny,
+		cbmx.norigcostmny s,
+	CASE
+
+			WHEN y1.f = 0 THEN
+			1 ELSE cbmx.norigcostmny / y1.f
+		END bl,
+	xm.pk_org pk_org,
+	xm.code xmcode,
+	xm.name xmname,
+	cbmx.pk_project pk_project,
+	cbxm.pk_costpro pk_costpro,
+	wht.pk_nocont pk_nocont
+FROM
+	fdcpm_co_nocont wht
+	LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+	AND wht.dr = 0
+	AND cbgj.dr = 0
+	LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+	AND cbmx.dr = 0
+	LEFT JOIN fdcpm_bd_costpro cbxm ON cbxm.pk_costpro = cbmx.pk_costpro
+	AND cbxm.dr = 0
+	LEFT JOIN fdcpm_bd_cbs xm ON xm.pk_cbs = cbmx.pk_project
+	AND xm.dr = 0
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont pk_nocont,
+		sum( cbmx.norigcostmny ) f
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_cost_accum cbgj ON wht.vbillcode = cbgj.vbusicode
+		AND wht.dr = 0
+		AND cbgj.dr = 0
+		LEFT JOIN fdcpm_cost_accum_b cbmx ON cbmx.pk_accum = cbgj.pk_accum
+		AND cbmx.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) y1 ON wht.pk_nocont = y1.pk_nocont
+	LEFT JOIN fdcpm_co_nocont_plan plana ON wht.pk_nocont = plana.pk_nocont
+	AND plana.dr = 0
+	LEFT JOIN fdcpm_rp_contplan_b contp ON contp.pk_contplan_c = plana.pk_contplan_c
+	AND contp.dr = 0
+	) o2 ON wht.pk_nocont = o2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.*,
+	CASE
+
+			WHEN htlr.icontexecstatus = '3' THEN
+			htlr.norigsettlcostmny ELSE nvl(
+				(
+					nvl( htlr.norigcontsignmny, 0 ) + nvl( htlr.norigattachsignmny, 0 ) + nvl( htlr.norigcontchangeconfmny, 0 ) + nvl( htlr.norigcontchangeapplymny, 0 )
+				),
+				0
+			)
+		END AS dt
+	FROM
+		fdcpm_co_cont htlr
+	WHERE
+		htlr.dr = 0
+	) b ON htlr.pk_cont = b.pk_cont
+	AND htlr.dr = 0
+	LEFT JOIN fdcpm_pay_pay_acc jhxx ON fk.pk_pay = jhxx.pk_pay
+	AND jhxx.dr = 0
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN org_dept bm ON htlr.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND htlr.dr = 0
+		LEFT JOIN bd_psndoc ry ON htlr.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND htlr.dr = 0
+	) ry1 ON htlr.pk_cont = ry1.pk_cont
+	LEFT JOIN (
+	SELECT
+		ry.name jbr,
+		bm.name bm,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN org_dept bm ON wht.pk_dept = bm.pk_dept
+		AND bm.dr = 0
+		AND wht.dr = 0
+		LEFT JOIN bd_psndoc ry ON wht.pk_psndoc = ry.pk_psndoc
+		AND ry.dr = 0
+		AND wht.dr = 0
+	) ry2 ON wht.pk_nocont = ry2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		htlr.pk_cont cont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_apply fksq ON htlr.pk_cont = fksq.pk_cont
+		AND htlr.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		htlr.pk_cont
+	) c1 ON htlr.pk_cont = c1.cont
+	LEFT JOIN (
+	SELECT
+		wht.pk_nocont nocont,
+		nvl( sum( fknr.norigthisapplymny ), 0 ) yf
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_apply fksq ON wht.pk_nocont = fksq.pk_nocont
+		AND wht.dr = 0
+		AND fksq.dr = 0
+		LEFT JOIN fdcpm_pay_apply_deal fknr ON fksq.pk_apply = fknr.pk_apply
+		AND fknr.dr = 0
+	WHERE
+		fksq.fstatusflag = '1'
+	GROUP BY
+		wht.pk_nocont
+	) c2 ON wht.pk_nocont = c2.nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		htlr.pk_cont pk_cont
+	FROM
+		fdcpm_co_cont htlr
+		LEFT JOIN fdcpm_pay_pay fk ON htlr.pk_cont = fk.pk_cont
+		AND fk.dr = 0
+	GROUP BY
+		htlr.pk_cont
+	) j1 ON htlr.pk_cont = j1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( fk.norigthismny ), 0 ) norigthismny,
+		wht.pk_nocont pk_nocont
+	FROM
+		fdcpm_co_nocont wht
+		LEFT JOIN fdcpm_pay_pay fk ON wht.pk_nocont = fk.pk_nocont
+		AND fk.dr = 0
+	GROUP BY
+		wht.pk_nocont
+	) j2 ON wht.pk_nocont = j2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		fk.pk_cont pk_cont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont
+	) d1 ON htlr.pk_cont = d1.pk_cont
+	LEFT JOIN (
+	SELECT
+		fk.pk_nocont pk_nocont,
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		fk.fstatusflag = '1'
+		AND substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont
+	) d2 ON wht.pk_nocont = d2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_cont,
+		fk.pk_cont
+	) e1 ON htlr.pk_cont = e1.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) ljsf,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+		AND substr( zhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+		AND fk.dr = 0
+	GROUP BY
+		fk.pk_nocont,
+		fk.pk_nocont
+	) e2 ON wht.pk_nocont = e2.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f11 ON htlr.pk_cont = f11.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) yi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f12 ON wht.pk_nocont = f12.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f21 ON htlr.pk_cont = f21.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 1 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f22 ON wht.pk_nocont = f22.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f31 ON htlr.pk_cont = f31.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 2 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f32 ON wht.pk_nocont = f32.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f41 ON htlr.pk_cont = f41.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 3 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f42 ON wht.pk_nocont = f42.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f51 ON htlr.pk_cont = f51.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 4 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f52 ON wht.pk_nocont = f52.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f61 ON htlr.pk_cont = f61.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 5 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f62 ON wht.pk_nocont = f62.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f71 ON htlr.pk_cont = f71.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 6 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f72 ON wht.pk_nocont = f72.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f81 ON htlr.pk_cont = f81.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 7 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f82 ON wht.pk_nocont = f82.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f91 ON htlr.pk_cont = f91.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 8 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f92 ON wht.pk_nocont = f92.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f101 ON htlr.pk_cont = f101.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 9 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f102 ON wht.pk_nocont = f102.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f111 ON htlr.pk_cont = f111.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 10 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f112 ON wht.pk_nocont = f112.pk_nocont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_cont pk_cont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_cont
+	) f121 ON htlr.pk_cont = f121.pk_cont
+	LEFT JOIN (
+	SELECT
+		nvl( sum( zhxx.norigrealpaymny ), 0 ) mingxi,
+		fk.pk_nocont pk_nocont
+	FROM
+		fdcpm_pay_pay fk
+		LEFT JOIN fdcpm_pay_pay_acc zhxx ON fk.pk_pay = zhxx.pk_pay
+		AND fk.dr = 0
+		AND zhxx.dr = 0
+	WHERE
+		substr( zhxx.dpaydate, 1, 7 ) = to_char( add_months( to_date( parameter ( 'sdate' ), 'yyyy-MM-dd' ), 11 ), 'yyyy-MM' )
+	GROUP BY
+		fk.pk_nocont
+	) f122 ON wht.pk_nocont = f122.pk_nocont
+WHERE
+	substr( jhxx.dpaydate, 1, 10 ) >= parameter ( 'sdate' )
+	AND substr( jhxx.dpaydate, 1, 10 ) <= parameter ( 'edate' )
+	)
+WHERE
+	pk_project IN ( parameter ( 'pk_project' ) )
+	AND pk_org = ( parameter ( 'pk_org' ) )
+GROUP BY
+	code,
+	name,
+	nbmmny,
+	vbillcode,
+	vname,
+	jbr,
+	bm,
+	htqyje,
+	htdtje,
+	ljshk,
+	ljsfk,
+	sfk,
+	hj,
+	yi,
+	er,
+	san,
+	si,
+	wu,
+	liu,
+	qi,
+	ba,
+	jiu,
+	shi,
+	shiy,
+	shie,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+	) w ON cbxm.pk_costpro = w.pk_costpro
+	) sa
+	)
+WHERE
+	length( code ) <> 2
+	AND length( code ) <> 4
+GROUP BY
+	acode,
+	code,
+	name,
+	nbmmny,
+	vname,
+	vbillcode,
+	jbr,
+	bm,
+	pk_project,
+	pk_org,
+	xmcode,
+	xmname,
+	pk_group,
+	pk_costpro
+ORDER BY
+	bcode ASC
+	)
+	)
+	)
+WHERE
+	length( bcode ) <> 2
+ORDER BY
+	bcode ASC
