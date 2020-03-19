@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>收益率柱状图</title>
+    <!-- 引入 echarts.js -->
+    <script src="./js/echarts.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="fund" style="width: 1600px;height:600px;"></div>
+<div id="stock" style="width: 1600px;height:600px;"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChartFund = echarts.init(document.getElementById('fund'));
+    // 指定图表的配置项和数据
+    myChartFund.setOption({
+        title: {
+            text: ''
+        },
+        tooltip: {},
+        legend: {
+            data: ['收益率'],
+            textStyle: {
+                color: 'red'
+            }
+        },
+        grid: {   // ---------------------------增加这个属性，bottom就是距离底部的距离
+            bottom: '30%'
+        },
+        xAxis: {
+            data: [],
+            // -----------------------------------------------------横坐标垂直显示
+            axisLabel: {
+                interval: 0,
+                formatter: function (value) {
+                    return value.split("").join("\n");
+                },
+                textStyle: {
+                    color: '#black',  //更改坐标轴文字颜色
+                    fontSize : 12      //更改坐标轴文字大小
+                }
+            }
+            // -----------------------------------------------------横坐标垂直显示
+        },
+        yAxis: {},
+        series: [{
+            name: '收益率',
+            type: 'bar',
+            data: [],
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                            color: 'black',
+                            fontSize: 12
+                        }
+                    },
+                    color:function(params) {
+                        var index_color = params.value;
+                        if(index_color<0){
+                            return 'green';
+                        }else {
+                            return 'red';
+                        }
+                    }
+                }
+            }
+        }],
+        dataZoom: {//设置滚动条
+            show: true,
+            realtime: true,
+            y: 36,
+            height: 20,
+            start: 0,
+            end: 100
+        }
+    });
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChartStock = echarts.init(document.getElementById('stock'));
+    // 指定图表的配置项和数据
+    myChartStock.setOption({
+        title: {
+            text: ''
+        },
+        tooltip: {},
+        legend: {
+            data: ['收益率'],
+            textStyle: {
+                color: 'red'
+            }
+        },
+        grid: {   // ---------------------------增加这个属性，bottom就是距离底部的距离
+            bottom: '30%'
+        },
+        xAxis: {
+            data: [],
+            // -----------------------------------------------------横坐标垂直显示
+            axisLabel: {
+                interval: 0,
+                formatter: function (value) {
+                    return value.split("").join("\n");
+                },
+                textStyle: {
+                    color: '#black',  //更改坐标轴文字颜色
+                    fontSize : 12      //更改坐标轴文字大小
+                }
+            }
+            // -----------------------------------------------------横坐标垂直显示
+        },
+        yAxis: {},
+        series: [{
+            name: '收益率',
+            type: 'bar',
+            data: [],
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                            color: 'black',
+                            fontSize: 12
+                        }
+                    },
+                    color:function(params) {
+                        var index_color = params.value;
+                        if(index_color<0){
+                            return 'green';
+                        }else {
+                            return 'red';
+                        }
+                    }
+                }
+            }
+        }],
+        dataZoom: {//设置滚动条
+            show: true,
+            realtime: true,
+            y: 36,
+            height: 20,
+            start: 0,
+            end: 100
+        }
+    });
+
+    $.ajaxPrefilter(function (options) {
+        if (options.crossDomain && jQuery.support.cors) {
+            var http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
+            options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
+            //options.url = "http://cors.corsproxy.io/url=" + options.url;
+        }
+    });
+
+    dealData();
+    //fu_002794,fu_001668,fu_040046,fu_008087
+    setInterval(() => {
+        //window.href='http://hq.sinajs.cn/?list=gb_baba';
+        dealData();
+    },
+    10000
+    )
+
+    function dealData() {
+        $.get(
+            'https://hq.sinajs.cn/list=fu_001618,fu_001210,fu_001559,fu_164205,fu_420001,fu_001630,fu_001595,' +
+            'fu_001553,fu_005918,fu_001551,fu_001617,fu_001558,fu_005911,fu_002974,fu_270002,fu_162703,fu_007300,' +
+            'fu_001071,fu_001156,fu_162412,fu_519674,fu_005940,fu_002692,fu_110022,fu_000339,fu_002264,' +
+            'fu_002851,fu_005592,fu_002147,fu_005588,fu_320007,sh000001,sh000016,sz399005,sh000300,sz399006,sz399001',
+            function (response) {
+                //
+                //var beginTime = +new Date();
+                //console.log(response);
+                var strArray = new Array(); //定义一数组
+                strArray = response.substring(0, response.length - 2).split(";");
+                //console.log(strArray);
+                //$("#html").html(response);
+                var params = [];
+                for (var i = 0; i < strArray.length; i++) {
+                    //console.log(strArray[i])
+                    var str = strArray[i].substring(strArray[i].indexOf("=") + 2, strArray[i].length - 1);
+                    var strArrayTemp = str.split(",");
+
+                    var rate = 0;
+                    var code = strArray[i].substring(strArray[i].indexOf("="), strArray[i].indexOf("=") - 6);
+                    var name = strArrayTemp[0];
+                    if(i < strArray.length - 6){
+                        rate = strArrayTemp[strArrayTemp.length - 2];
+                    } else {
+                        //后6个为大盘数据，保留4位小数
+                        var rate = (strArrayTemp[3] - strArrayTemp[2])/strArrayTemp[2]*100;
+                        rate = String(rate).replace(/^(.*\..{4}).*$/,"$1");
+                        rate = Number(rate); // number = 12.3321
+//                        rate = (strArrayTemp[2] - strArrayTemp[1])/strArrayTemp[2]*100;
+                    }
+
+                    //console.log(strArrayTemp);
+                    params.push({"rate": rate, "code": code, "name": name, "group": strArrayTemp});
+                }
+//                var jsonData = JSON.stringify(params);
+//                console.log(jsonData);
+
+                var json = jsonSort(params, "rate", true);
+
+                var echartsParams = [];
+                var strCategories = "";
+                var strData = "";
+                for (var i in json) {
+                    var categories = json[i].name;
+                    var data = json[i].rate;
+                    if (i != json.length - 1) {
+                        strCategories += categories + ",";
+                        strData += data + ",";
+                    } else {
+                        strCategories += categories;
+                        strData += data;
+                    }
+
+                }
+                echartsParams.push({"categories": strCategories.split(","), "data": strData.split(",")});
+
+
+                var echartsParamsJson = echartsParams[0];
+                //console.log(echartsParamsJson);
+                //console.log(echartsParamsJson.categories);
+                //console.log(echartsParamsJson.data);
+                // 填入数据
+                myChartFund.setOption({
+                    xAxis: {data: echartsParamsJson.categories},
+                    series: {data: echartsParamsJson.data}
+                });
+                // 填入数据
+                myChartStock.setOption({
+                    xAxis: {data: echartsParamsJson.categories},
+                    series: {data: echartsParamsJson.data}
+                });
+                //var endTime = +new Date();
+                //console.log("用时共计"+(endTime-beginTime)+"ms");
+            });
+    }
+
+    /*
+   * @description    根据某个字段实现对json数组的排序
+   * @param   array  要排序的json数组对象
+   * @param   field  排序字段（此参数必须为字符串）
+   * @param   reverse 是否倒序（默认为false）
+   * @return  array  返回排序后的json数组
+  */
+    function jsonSort(array, field, reverse) {
+        //var beginTime = +new Date();
+        //数组长度小于2 或 没有指定排序字段 或 不是json格式数据
+        if (array.length < 2 || !field || typeof array[0] !== "object") return array;
+        array.sort(function (x, y) {
+            return x[field] - y[field]
+        });
+        //数字类型排序
+        //if(typeof array[0][field] === "number") {
+        //  array.sort(function(x, y) {return x[field] - y[field]});
+        //}
+        //字符串类型排序
+        //if(typeof array[0][field] === "string") {
+        //  array.sort(function(x, y) {return x[field].localeCompare(y[field])});
+        //}
+        //倒序
+        if (reverse) {
+            array.reverse();
+        }
+        //var endTime = +new Date();
+        //console.log("用时共计"+(endTime-beginTime)+"ms");
+        return array;
+    }
+
+    // 异步加载数据
+    //$.get('data.json').done(function (data) {
+    // 填入数据
+    //     myChart.setOption({ xAxis: { data: data.categories }, series: [{
+    //         // 根据名字对应到相应的系列
+    //         name: '销量',
+    //       data: data.data
+    //   }]
+    //   });});
+</script>
+</body>
+</html>
