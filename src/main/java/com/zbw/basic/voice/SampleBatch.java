@@ -136,6 +136,7 @@ public class SampleBatch {
 
         // construct params
         JSONObject params = new JSONObject();
+//        params.put("dev_pid", 1737);
         params.put("format", "pcm");
         params.put("rate", 16000);
         params.put("channel", "1");

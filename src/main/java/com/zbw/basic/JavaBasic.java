@@ -81,14 +81,17 @@ public class JavaBasic {
 //        }
 
         String string = "develop##wl0001";
-        System.out.println(string.indexOf("#"));
-        System.out.println(string.substring(0,string.indexOf("#")));
-        System.out.println(string.substring(string.indexOf("#") + 1,string.length()));
-        String string1 = "develop#wl0001";
-        System.out.println(string1.lastIndexOf("#"));
-        System.out.println(string.substring(0,string.lastIndexOf("#")));
-        System.out.println(string1.substring(string1.lastIndexOf("#") + 1,string1.length()));
+//        System.out.println(string.indexOf("#"));
+//        System.out.println(string.substring(0,string.indexOf("#")));
+//        System.out.println(string.substring(string.indexOf("#") + 1,string.length()));
+//        String string1 = "develop#wl0001";
+//        System.out.println(string1.lastIndexOf("#"));
+//        System.out.println(string.substring(0,string.lastIndexOf("#")));
+//        System.out.println(string1.substring(string1.lastIndexOf("#") + 1,string1.length()));
 
+        System.out.println(string.length());
+        System.out.println(string.substring(0,15));
+        System.out.println();
 
     }
 

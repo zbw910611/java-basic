@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>收益率柱状图</title>
+    <!-- 引入 echarts.js -->
+    <script src="./js/echarts.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="stock" align="left" style="float:left;width: 300px;height:600px;" ></div>
+<div id="fund" align="right" style="float:right;width: 1200px;height:600px;" ></div>
+
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChartStock = echarts.init(document.getElementById('stock'));
+    var index = "top";
+    // 指定图表的配置项和数据
+    myChartStock.setOption({
+        title: {
+            text: '股票'
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: function(params) {
+//                data: [{ value: 10, day: 1 },
+//                    { value: 52, day: 10 },
+//                    { value: 200, day: 1 },
+//                    { value: 334, day: 13 },
+//                    { value: 390, day: 20 },
+//                    { value: 330, day: 21 },
+//                    { value: 220, day: 1 }]
+//                console.log(params);
+                const item = params[0];
+                var res= '<div><span>'+item.name+'</span></div>' +
+                    '<div><span>'+item.marker+'收益率：</span>'+item.data.value+'</div>' +
+                    '<div><span>'+item.marker+'指数：</span>'+item.data.index+'</div>';
+                return res;
+            },
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow',       // 默认为直线，可选为：'line' | 'shadow'
+                shadowStyle:{
+                    color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                            offset: 0, color: 'red' // 0% 处的颜色
+                        }, {
+                            offset: 1, color: 'green' // 100% 处的颜色
+                        }],
+                        globalCoord: false // 缺省为 false
+                    },
+                    opacity:0.5//设置透明度0-1
+                }
+            }
+
+        },
+        legend: {
+            data: ['收益率'],
+            textStyle: {
+                color: 'red'
+            }
+        },
+        grid: {   // ---------------------------增加这个属性，bottom就是距离底部的距离
+            bottom: '30%'
+        },
+        xAxis: {
+            data: [],
+            // -----------------------------------------------------横坐标垂直显示
+            axisLabel: {
+                interval: 0,
+                formatter: function (value) {
+                    return value.split("").join("\n");
+                },
+                textStyle: {
+                    color: '#black',  //更改坐标轴文字颜色
+                    fontSize : 12      //更改坐标轴文字大小
+                }
+            }
+            // -----------------------------------------------------横坐标垂直显示
+        },
+        yAxis: {},
+        series: [{
+            name: '收益率',
+            type: 'bar',
+            data: [],
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                            color: 'black',
+                            fontSize: 12
+                        }
+                    },
+                    color:function(params) {
+                        var index_color = params.value;
+                        if(index_color<0){
+                            return 'green';
+                        }else {
+                            return 'red';
+                        }
+                    }
+                }
+            }
+        }],
+        dataZoom: {//设置滚动条
+            show: true,
+            realtime: true,
+            y: 36,
+            height: 20,
+            start: 0,
+            end: 100
+        }
+    });
+
+    $.ajaxPrefilter(function (options) {
+        if (options.crossDomain && jQuery.support.cors) {
+            var http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
+            options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
+            //options.url = "http://cors.corsproxy.io/url=" + options.url;
+        }
+    });
+
+    dealDataStock();
+    //fu_002794,fu_001668,fu_040046,fu_008087
+    setInterval(() => {
+        //window.href='http://hq.sinajs.cn/?list=gb_baba';
+        dealDataStock();
+    },
+    10000
+    )
+
+    function dealDataStock() {
+        $.get(
+            'https://hq.sinajs.cn/list=sh000001,sh000016,sz399005,sh000300,sz399006,sz399001,sh600588',
+            function (response) {
+                //var beginTime = +new Date();
+                //console.log(response);
+                var strArray = new Array(); //定义一数组
+                strArray = response.substring(0, response.length - 2).split(";");
+                //$("#html").html(response);
+                var params = [];
+                for (var i = 0; i < strArray.length; i++) {
+                    var str = strArray[i].substring(strArray[i].indexOf("=") + 2, strArray[i].length - 1);
+                    var strArrayTemp = str.split(",");
+                    var code = strArray[i].substring(strArray[i].indexOf("="), strArray[i].indexOf("=") - 6);
+                    var name = strArrayTemp[0];
+                    var value = strArrayTemp[3];
+                    //大盘数据，保留4位小数
+                    var rate = (strArrayTemp[3] - strArrayTemp[2])/strArrayTemp[2]*100;
+                    rate = String(rate).replace(/^(.*\..{4}).*$/,"$1");
+                    rate = Number(rate); // number = 12.3321
+                    //console.log(strArrayTemp);
+                    params.push({"value": rate,"index": value, "code": code, "name": name, "group": strArrayTemp});
+                }
+//                var jsonData = JSON.stringify(params);
+//                console.log(jsonData);
+                var json = jsonSort(params, "value", true);
+                var echartsParams = [];
+                var strCategories = "";
+                var strValue = "";
+                for (var i in json) {
+                    var categories = json[i].name;
+                    var value = json[i].value;
+                    if (i != json.length - 1) {
+                        strCategories += categories + ",";
+                        strValue += value + ",";
+                    } else {
+                        strCategories += categories;
+                        strValue += value;
+                    }
+                }
+                echartsParams.push({"categories": strCategories.split(","), "value": strValue.split(",")});
+                var echartsParamsJson = echartsParams[0];
+                // 填入数据
+                myChartStock.setOption({
+                    xAxis: {data: echartsParamsJson.categories},
+                    series: {data: params}
+                });
+                //var endTime = +new Date();
+                //console.log("用时共计"+(endTime-beginTime)+"ms");
+            });
+    }
+
+    /*
+   * @description    根据某个字段实现对json数组的排序
+   * @param   array  要排序的json数组对象
+   * @param   field  排序字段（此参数必须为字符串）
+   * @param   reverse 是否倒序（默认为false）
+   * @return  array  返回排序后的json数组
+  */
+    function jsonSort(array, field, reverse) {
+        //var beginTime = +new Date();
+        //数组长度小于2 或 没有指定排序字段 或 不是json格式数据
+        if (array.length < 2 || !field || typeof array[0] !== "object") return array;
+        array.sort(function (x, y) {
+            return x[field] - y[field]
+        });
+        //数字类型排序
+        //if(typeof array[0][field] === "number") {
+        //  array.sort(function(x, y) {return x[field] - y[field]});
+        //}
+        //字符串类型排序
+        //if(typeof array[0][field] === "string") {
+        //  array.sort(function(x, y) {return x[field].localeCompare(y[field])});
+        //}
+        //倒序
+        if (reverse) {
+            array.reverse();
+        }
+        //var endTime = +new Date();
+        //console.log("用时共计"+(endTime-beginTime)+"ms");
+        return array;
+    }
+
+    // 异步加载数据
+    //$.get('data.json').done(function (data) {
+    // 填入数据
+    //     myChart.setOption({ xAxis: { data: data.categories }, series: [{
+    //         // 根据名字对应到相应的系列
+    //         name: '销量',
+    //       data: data.data
+    //   }]
+    //   });});
+</script>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChartFund = echarts.init(document.getElementById('fund'));
+    // 指定图表的配置项和数据
+    myChartFund.setOption({
+        title: {
+            text: '基金'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow',       // 默认为直线，可选为：'line' | 'shadow'
+                shadowStyle:{
+                    color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                            offset: 0, color: 'red' // 0% 处的颜色
+                        }, {
+                            offset: 1, color: 'green' // 100% 处的颜色
+                        }],
+                        globalCoord: false // 缺省为 false
+                    },
+                    opacity:0.5//设置透明度0-1
+                }
+            }
+
+        },
+        legend: {
+            data: ['收益率'],
+            textStyle: {
+                color: 'red'
+            }
+        },
+        grid: {   // ---------------------------增加这个属性，bottom就是距离底部的距离
+            bottom: '30%'
+        },
+        xAxis: {
+            data: [],
+            // -----------------------------------------------------横坐标垂直显示
+            axisLabel: {
+                interval: 0,
+                formatter: function (value) {
+                    return value.split("").join("\n");
+                },
+                textStyle: {
+                    color: '#black',  //更改坐标轴文字颜色
+                    fontSize : 12      //更改坐标轴文字大小
+                }
+            }
+            // -----------------------------------------------------横坐标垂直显示
+        },
+        yAxis: {},
+        series: [{
+            name: '收益率',
+            type: 'bar',
+            data: [],
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                            color: 'black',
+                            fontSize: 12
+                        }
+                    },
+                    color:function(params) {
+                        var index_color = params.value;
+                        if(index_color<0){
+                            return 'green';
+                        }else {
+                            return 'red';
+                        }
+                    }
+                }
+            }
+        }],
+        dataZoom: {//设置滚动条
+            show: true,
+            realtime: true,
+            y: 36,
+            height: 20,
+            start: 0,
+            end: 100
+        }
+    });
+
+    $.ajaxPrefilter(function (options) {
+        if (options.crossDomain && jQuery.support.cors) {
+            var http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
+            options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
+            //options.url = "http://cors.corsproxy.io/url=" + options.url;
+        }
+    });
+
+    dealData();
+    //fu_002794,fu_001668,fu_040046,fu_008087
+    setInterval(() => {
+        //window.href='http://hq.sinajs.cn/?list=gb_baba';
+        dealData();
+    },
+    10000
+    );
+
+    function dealData() {
+        $.get(
+            //all
+            'https://hq.sinajs.cn/list=fu_005918,fu_420001,fu_164205,fu_001617,fu_001618,fu_001210,fu_001558,fu_001559,fu_001630,fu_001595,fu_001553,fu_001551,fu_000119,fu_005224,fu_270002,fu_005911,fu_002974,fu_162703,fu_005588,fu_005592,fu_002147,fu_001071,fu_002264,fu_110022,fu_002963,fu_000408,fu_161725,fu_160222,fu_001156,fu_002851,fu_007300,fu_007301,fu_162412,fu_519674,fu_005940,fu_002692,fu_000339,fu_320007,fu_002611,fu_002124,fu_003096,fu_002978,fu_004041,fu_001632,fu_420102',
+            //天弘
+            //'https://hq.sinajs.cn/list=fu_005918,fu_420001,fu_164205,fu_001617,fu_001618,fu_001210,fu_001558,fu_001559,fu_001630,fu_001595,fu_001553,fu_001551,fu_001632,fu_420102',
+            //广发
+            //'https://hq.sinajs.cn/list=fu_000119,fu_005224,fu_270002,fu_005911,fu_002974,fu_162703,fu_002124,fu_002978',
+            //其他
+            //'https://hq.sinajs.cn/list=fu_005588,fu_005592,fu_002147,fu_001071,fu_002264,fu_110022,fu_002963,fu_000408,fu_161725,fu_160222,fu_001156,fu_002851,fu_007300,fu_007301,fu_162412,fu_519674,fu_005940,fu_002692,fu_000339,fu_320007,fu_002611,fu_003096,fu_004041',
+            function (response) {
+                //var beginTime = +new Date();
+                var strArray = new Array(); //定义一数组
+                strArray = response.substring(0, response.length - 2).split(";");
+                //console.log(strArray);
+                //$("#html").html(response);
+                var params = [];
+                for (var i = 0; i < strArray.length; i++) {
+                    var str = strArray[i].substring(strArray[i].indexOf("=") + 2, strArray[i].length - 1);
+                    var strArrayTemp = str.split(",");
+                    var rate = strArrayTemp[strArrayTemp.length - 2];
+                    var code = strArray[i].substring(strArray[i].indexOf("="), strArray[i].indexOf("=") - 6);
+                    var name = strArrayTemp[0];
+                    params.push({"rate": rate, "code": code, "name": name, "group": strArrayTemp});
+                }
+//                var jsonData = JSON.stringify(params);
+//                console.log(jsonData);
+                var json = jsonSort(params, "rate", true);
+
+                var echartsParams = [];
+                var strCategories = "";
+                var strData = "";
+                for (var i in json) {
+                    var categories = json[i].name;
+                    var data = json[i].rate;
+                    if (i != json.length - 1) {
+                        strCategories += categories + ",";
+                        strData += data + ",";
+                    } else {
+                        strCategories += categories;
+                        strData += data;
+                    }
+                }
+                echartsParams.push({"categories": strCategories.split(","), "data": strData.split(",")});
+
+                var echartsParamsJson = echartsParams[0];
+                // 填入数据
+                myChartFund.setOption({
+                    xAxis: {data: echartsParamsJson.categories},
+                    series: {data: echartsParamsJson.data}
+                });
+                //var endTime = +new Date();
+                //console.log("用时共计"+(endTime-beginTime)+"ms");
+            });
+    }
+
+    /*
+   * @description    根据某个字段实现对json数组的排序
+   * @param   array  要排序的json数组对象
+   * @param   field  排序字段（此参数必须为字符串）
+   * @param   reverse 是否倒序（默认为false）
+   * @return  array  返回排序后的json数组
+  */
+    function jsonSort(array, field, reverse) {
+        //数组长度小于2 或 没有指定排序字段 或 不是json格式数据
+        if (array.length < 2 || !field || typeof array[0] !== "object") return array;
+        array.sort(function (x, y) {
+            return x[field] - y[field]
+        });
+        //数字类型排序
+        //if(typeof array[0][field] === "number") {
+        //  array.sort(function(x, y) {return x[field] - y[field]});
+        //}
+        //字符串类型排序
+        //if(typeof array[0][field] === "string") {
+        //  array.sort(function(x, y) {return x[field].localeCompare(y[field])});
+        //}
+        //倒序
+        if (reverse) {
+            array.reverse();
+        }
+        return array;
+    }
+
+    // 异步加载数据
+    //$.get('data.json').done(function (data) {
+    // 填入数据
+    //     myChart.setOption({ xAxis: { data: data.categories }, series: [{
+    //         // 根据名字对应到相应的系列
+    //         name: '销量',
+    //       data: data.data
+    //   }]
+    //   });});
+</script>
+
+</body>
+</html>
