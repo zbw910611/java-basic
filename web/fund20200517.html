@@ -8,61 +8,22 @@
     <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
 </head>
 <body>
-<div style="color: #323232; ">
+<div>
     查找：
     <input id="input"/>
-    <button>搜索</button>
+    <button id="search">搜索</button>
 </div>
-<script>
-
-    $(document).ready(function(){
-//					先监听input的值变化
-        document.getElementById("input").oninput=function(){
-            var val = $(this).val()
-            if(val!=""){
-                //当input中有值 的时候显示ul列表
-                $("#ul").css("display","block")
-                //开始监听键盘事件
-                document.onkeydown = function (e) {
-                    e = e || window.event;
-                    var code = e.keyCode  //用来储存 e.keycode
-                    if(code==13){
-                        console.log("回车")
-                        console.log(val)
-                    }
-                }
-            }
-        }
-
-        document.getElementById("input").onclick=function(){
-            var val = $(this).val()
-            if(val!=""){
-                //当input中有值 的时候显示ul列表
-                $("#ul").css("display","block")
-                //开始监听键盘事件
-                document.onkeydown = function (e) {
-                    e = e || window.event;
-                    var code = e.keyCode  //用来储存 e.keycode
-                    if(code==13){
-                        console.log("搜索")
-                        console.log(val)
-                    }
-                }
-            }
-        }
-    })
-
-</script>
 <div id="selectIdBox">
     <select id="selectID">
         <option value="全部" style="color:#c2c2c2;">全部</option>
         <option value="主要">主要</option>
         <option value="广发">广发</option>
-        <option value="天弘">天弘</option>
-        <option value="其他1">其他1</option>
-        <option value="其他2">其他2</option>
+                <option value="天弘">天弘</option>
+                <option value="其他1">其他1</option>
+        <!--        <option value="其他2">其他2</option>-->
     </select>
 </div>
+
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 <div id="fund" style="text-align:center;height:600px;" ></div>
 <script type="text/javascript">
@@ -70,13 +31,6 @@
     var myChartFund = echarts.init(document.getElementById('fund'));
     // 指定图表的配置项和数据
     myChartFund.setOption({
-        backgroundColor: new echarts.graphic.RadialGradient(0.3, 0.3, 0.8, [{
-            offset: 0,
-            color: '#f7f8fa'
-        }, {
-            offset: 1,
-            color: '#cdd0d5'
-        }]),
         title: {
             text: '基金'
         },
@@ -98,7 +52,27 @@
                     '<div><span style="float: left">'+item.marker+'收益率：</span>' +
                     '<span style="float: right">'+item.data.value+'</span></div>';
                 return res;
+            },
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow',       // 默认为直线，可选为：'line' | 'shadow'
+                shadowStyle:{
+                    color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [{
+                            offset: 0, color: 'red' // 0% 处的颜色
+                        }, {
+                            offset: 1, color: 'green' // 100% 处的颜色
+                        }],
+                        globalCoord: false // 缺省为 false
+                    },
+                    opacity:0.5//设置透明度0-1
+                }
             }
+
         },
         legend: {
             data: ['收益率'],
@@ -110,49 +84,44 @@
             bottom: '30%'
         },
         xAxis: {
-            splitLine: {
-                lineStyle: {
-                    type: 'dashed'
+            data: [],
+            // -----------------------------------------------------横坐标垂直显示
+            axisLabel: {
+                interval: 0,
+                formatter: function (value) {
+                    return value.split("").join("\n");
+                },
+                textStyle: {
+                    color: '#black',  //更改坐标轴文字颜色
+                    fontSize : 12      //更改坐标轴文字大小
                 }
             }
+            // -----------------------------------------------------横坐标垂直显示
         },
-        yAxis: {
-            splitLine: {
-                lineStyle: {
-                    type: 'dashed'
-                }
-            },
-            scale: true
-        },
+        yAxis: {},
         series: [{
             name: '收益率',
+            type: 'bar',
             data: [],
-            type: 'scatter',
-            symbolSize: function (data) {
-                console.log("symbolSize:" + data);
-                return data*10;
-            },
-            emphasis: {
-                label: {
-                    show: true,
-                    formatter: function (param) {
-                        console.log("param:" + param.name)
-                        return param.name;
-                    },
-                    position: 'top'
-                }
-            },
             itemStyle: {
-                shadowBlur: 10,
-                shadowColor: 'rgba(120, 36, 50, 0.5)',
-                shadowOffsetY: 5,
-                color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
-                    offset: 0,
-                    color: 'rgb(251, 118, 123)'
-                }, {
-                    offset: 1,
-                    color: 'rgb(204, 46, 72)'
-                }])
+                normal: {
+                    label: {
+                        show: true, //开启显示
+                        position: 'top', //在上方显示
+                        textStyle: { //数值样式
+                            color: 'black',
+                            fontSize: 12
+                        }
+                    },
+                    color:function(params) {
+                        var index_color = params.value;
+                        if(index_color<0){
+                            return 'green';
+                        }else {
+                            return 'red';
+                        }
+                    }
+                }
             }
         }],
         dataZoom: {//设置滚动条
@@ -178,45 +147,102 @@
     $("#selectID").change(function(){
         var selectID = $("#selectID").val();
         if(selectID == "全部"){
-            url= 'https://hq.sinajs.cn/list=fu_003745,fu_005911,fu_002939,fu_162703,fu_004997,fu_270002,fu_270041,fu_002977,fu_004851,fu_002978,fu_002974,fu_005224,fu_000119,fu_002125,fu_001210,fu_001618,fu_001559,fu_001551,fu_164205,fu_001632,fu_005918,fu_420001,fu_001595,fu_001630,fu_001553,fu_420102,fu_519674,fu_320007,fu_002560,fu_002692,fu_161031,fu_377240,fu_210008,fu_007301,fu_001071,fu_003096,fu_002264,fu_000339,fu_162412,fu_160624,fu_005682,fu_005592,fu_005588,fu_001156,fu_005940,fu_000408,fu_002851,fu_160222,fu_110022,fu_161725,fu_004041,fu_008087,fu_003634,fu_161028';
+            url= 'https://hq.sinajs.cn/list=fu_003745,fu_005911,fu_002939,fu_004851,fu_270041,fu_162703,fu_004997,fu_002125' +
+                ',fu_001210,fu_001618,fu_001559,fu_001632,' +
+                'fu_320007,fu_007301,fu_003096,fu_160624,fu_005889,fu_161725,fu_160222,fu_519674,fu_002692,fu_005682,fu_003634';
         } else if (selectID == "主要"){
-            url = 'https://hq.sinajs.cn/list=fu_003745,fu_005911,fu_002939,fu_162703,fu_004997,fu_270002,fu_270041,fu_002977,fu_004851,fu_001210,fu_001618,fu_001559,fu_519674,fu_320007,fu_002560,fu_160624,fu_005682,fu_001156,fu_005940,fu_000408,fu_002851,fu_160222,fu_110022,fu_161725';
+            url = 'https://hq.sinajs.cn/list=fu_003745,fu_005911,fu_002939,fu_004851,fu_270041,fu_162703,fu_004997,fu_002125' +
+                ',fu_001210,fu_001618,fu_001559,fu_001632,' +
+                'fu_320007,fu_007301,fu_003096,fu_160624,fu_005889,fu_161725,fu_160222,fu_519674,fu_002692,fu_005682,fu_003634';
         } else if (selectID == "广发"){
-            url = 'https://hq.sinajs.cn/list=fu_003745,fu_005911,fu_002939,fu_162703,fu_004997,fu_270002,fu_270041,fu_002977,fu_004851,fu_002978,fu_002974,fu_005224,fu_000119,fu_002125';
+            url = 'https://hq.sinajs.cn/list=fu_003745,fu_005911,fu_002939,fu_004851,fu_270041,fu_162703,fu_004997,fu_002125';
         } else if (selectID == "天弘"){
-            url = 'https://hq.sinajs.cn/list=fu_001210,fu_001618,fu_001559,fu_001551,fu_164205,fu_001632,fu_005918,fu_420001,fu_001595,fu_001630,fu_001553,fu_420102';
+            url = 'https://hq.sinajs.cn/list=fu_001210,fu_001618,fu_001559,fu_001632';
         } else if (selectID == "其他1"){
-            url = 'https://hq.sinajs.cn/list=fu_519674,fu_320007,fu_002560,fu_002692,fu_161031,fu_377240,fu_210008,fu_007301,fu_001071,fu_003096,fu_002264,fu_000339,fu_162412,fu_160624,fu_005682';
+            url = 'https://hq.sinajs.cn/list=fu_320007,fu_007301,fu_003096,fu_160624,fu_005889,fu_161725,fu_160222,fu_519674,fu_002692,fu_005682,fu_003634';
         } else if (selectID == "其他2"){
-            url = 'https://hq.sinajs.cn/list=fu_005592,fu_005588,fu_001156,fu_005940,fu_000408,fu_002851,fu_160222,fu_110022,fu_161725,fu_004041,fu_008087,fu_003634,fu_161028';
+            //url = 'https://hq.sinajs.cn/list=fu_005592,fu_005588,fu_001156,fu_005940,fu_000408,fu_002851,fu_160222,fu_110022,fu_161725,fu_004041,fu_008087,fu_003634,fu_161028';
         }
 
         clearInterval(myVar);
         myVar = setInterval(() => {
             dealData(url);
-            },
-                10000
-            );
+    },
+        10000
+    );
     });
-//    console.log(url);
+    //    console.log(url);
 
     if(url == ''){
-        url= 'https://hq.sinajs.cn/list=fu_005911,fu_002939,fu_003745,fu_004851,fu_162703,fu_270002,fu_270041,fu_002978,fu_000119,fu_002974,fu_005224,fu_002977,' +
-            'fu_001210,fu_001559,fu_001618,fu_001551,fu_164205,fu_001632,fu_005918,fu_420001,fu_001595,fu_001630,fu_001553,fu_420102,' +
-            'fu_003096,fu_005592,fu_005588,fu_007301,fu_320007,fu_001071,fu_000408,fu_001156,fu_002851,fu_160222,fu_110022,fu_161725,' +
-            'fu_162412,fu_002264,fu_008087,fu_004041,fu_000339,fu_005940,fu_002692,fu_519674';
+        url= 'https://hq.sinajs.cn/list=fu_003745,fu_005911,fu_002939,fu_004851,fu_270041,fu_162703,fu_004997,fu_002125' +
+            ',fu_001210,fu_001618,fu_001559,fu_001632,' +
+            'fu_320007,fu_007301,fu_003096,fu_160624,fu_005889,fu_161725,fu_160222,fu_519674,fu_002692,fu_005682,fu_003634';
         dealData(url);
         myVar = setInterval(() => {
             dealData(url);
-        },
-            10000
-        );
+    },
+        10000
+    );
     }
-//    setInterval(() => {
-//        dealData();
-//    },
-//    10000
-//    );
+    //    setInterval(() => {
+    //        dealData();
+    //    },
+    //    10000
+    //    );
+    //					先监听input的值变化
+    document.getElementById("input").oninput=function(){
+        var val = $(this).val()
+        if(val!=""){
+            //开始监听键盘事件
+            document.onkeydown = function (e) {
+                e = e || window.event;
+                var code = e.keyCode  //用来储存 e.keycode
+                if(code==13){
+                    console.log("回车");
+                    console.log(val);
+                    url = 'https://hq.sinajs.cn/list=';
+                    if(val.indexOf(",") != -1){
+                        var strArray = new Array(); //定义一数组
+                        strArray = val.split(",");
+                        for (var i = 0; i < strArray.length; i++) {
+                            if(i != strArray.length -1){
+                                url += "fu_" +strArray[i] + ",";
+                            } else {
+                                url += "fu_" +strArray[i];
+                            }
+                        }
+                    } else {
+                        url += "fu_" +val;
+                    }
+                    dealData(url);
+                    myVar = setInterval(() => {dealData(url);},10000);
+                }
+            }
+        }
+    }
+    $("#search").click(function(){
+        var val = $("#input").val()
+        if(val!=""){
+            console.log("搜索")
+            console.log(val)
+            url = 'https://hq.sinajs.cn/list=';
+            if(val.indexOf(",") != -1){
+                var strArray = new Array(); //定义一数组
+                strArray = val.split(",");
+                for (var i = 0; i < strArray.length; i++) {
+                    if(i != strArray.length -1){
+                        url += "fu_" +strArray[i] + ",";
+                    } else {
+                        url += "fu_" +strArray[i];
+                    }
+                }
+            } else {
+                url += "fu_" +val;
+            }
+            dealData(url);
+            myVar = setInterval(() => {dealData(url);},10000);
+        }
+    })
 
     function dealData(url) {
         $.get(url,

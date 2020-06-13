@@ -8,6 +8,51 @@
     <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
 </head>
 <body>
+<div style="color: #323232; ">
+    查找：
+    <input id="input"/>
+    <button>搜索</button>
+</div>
+<script>
+
+    $(document).ready(function(){
+//					先监听input的值变化
+        document.getElementById("input").oninput=function(){
+            var val = $(this).val()
+            if(val!=""){
+                //当input中有值 的时候显示ul列表
+                $("#ul").css("display","block")
+                //开始监听键盘事件
+                document.onkeydown = function (e) {
+                    e = e || window.event;
+                    var code = e.keyCode  //用来储存 e.keycode
+                    if(code==13){
+                        console.log("回车")
+                        console.log(val)
+                    }
+                }
+            }
+        }
+
+        document.getElementById("input").onclick=function(){
+            var val = $(this).val()
+            if(val!=""){
+                //当input中有值 的时候显示ul列表
+                $("#ul").css("display","block")
+                //开始监听键盘事件
+                document.onkeydown = function (e) {
+                    e = e || window.event;
+                    var code = e.keyCode  //用来储存 e.keycode
+                    if(code==13){
+                        console.log("搜索")
+                        console.log(val)
+                    }
+                }
+            }
+        }
+    })
+
+</script>
 <div id="selectIdBox">
     <select id="selectID">
         <option value="全部" style="color:#c2c2c2;">全部</option>
