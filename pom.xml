@@ -90,6 +90,23 @@
             <artifactId>guava</artifactId>
             <version>18.0</version>
         </dependency>
+
+        <!--gson-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+        <!--gson-->
+        <!--fastjson-->
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.71</version>
+        </dependency>
+        <!--fastjson-->
+
     </dependencies>
 
     <!--配置默认maven和jdk版本-->

@@ -16,11 +16,10 @@
 <div id="selectIdBox">
     <select id="selectID">
         <option value="全部" style="color:#c2c2c2;">全部</option>
-        <option value="主要">主要</option>
-        <option value="广发">广发</option>
-                <option value="天弘">天弘</option>
-                <option value="其他1">其他1</option>
-        <!--        <option value="其他2">其他2</option>-->
+        <option value="医疗">医疗</option>
+        <option value="消费">消费</option>
+                <option value="科技">科技</option>
+                <option value="其他">其他</option>
     </select>
 </div>
 
@@ -147,20 +146,18 @@
     $("#selectID").change(function(){
         var selectID = $("#selectID").val();
         if(selectID == "全部"){
-            url= 'https://hq.sinajs.cn/list=fu_005911,fu_002939,fu_004851,fu_004995,fu_003745,fu_270041,fu_162703,fu_004997,fu_002125' +
-                ',fu_320007,fu_005889,fu_007301,fu_161725,fu_160222,fu_003634' +
-                ',fu_001210,fu_001618';
-        } else if (selectID == "主要"){
-            url = 'https://hq.sinajs.cn/list=fu_005911,fu_002939,fu_004851,fu_004995' +
-                ',fu_320007,fu_005889';
-        } else if (selectID == "广发"){
-            url = 'https://hq.sinajs.cn/list=fu_005911,fu_002939,fu_004851,fu_004995,fu_003745,fu_270041,fu_162703,fu_004997,fu_002125';
-        } else if (selectID == "天弘"){
-            url = 'https://hq.sinajs.cn/list=fu_001210,fu_001618';
-        } else if (selectID == "其他1"){
-            url = 'https://hq.sinajs.cn/list=fu_320007,fu_005889,fu_007301,fu_161725,fu_160222,fu_003634';
-        } else if (selectID == "其他2"){
-            //url = 'https://hq.sinajs.cn/list=fu_005592,fu_005588,fu_001156,fu_005940,fu_000408,fu_002851,fu_160222,fu_110022,fu_161725,fu_004041,fu_008087,fu_003634,fu_161028';
+            url= 'https://hq.sinajs.cn/list=fu_004851,fu_006229,fu_003096,fu_001915,fu_005805' +
+                ',fu_004995,fu_005889,fu_005812' +
+                ',fu_007345,fu_100060,fu_005777,fu_005911' +
+                ',fu_160222,fu_161725,fu_001928';
+        } else if (selectID == "医疗"){
+            url = 'https://hq.sinajs.cn/list=fu_004851,fu_006229,fu_003096,fu_001915,fu_005805';
+        } else if (selectID == "消费"){
+            url = 'https://hq.sinajs.cn/list=fu_004995,fu_005889,fu_005812';
+        } else if (selectID == "科技"){
+            url = 'https://hq.sinajs.cn/list=fu_007345,fu_100060,fu_005777,fu_005911';
+        } else if (selectID == "其他"){
+            url = 'https://hq.sinajs.cn/list=fu_160222,fu_161725,fu_001928';
         }
 
         clearInterval(myVar);
@@ -173,9 +170,10 @@
     //    console.log(url);
 
     if(url == ''){
-        url= 'https://hq.sinajs.cn/list=fu_005911,fu_002939,fu_004851,fu_004995,fu_003745,fu_270041,fu_162703,fu_004997,fu_002125' +
-            ',fu_320007,fu_005889,fu_007301,fu_161725,fu_160222,fu_003634' +
-            ',fu_001210,fu_001618';
+        url= 'https://hq.sinajs.cn/list=fu_004851,fu_006229,fu_003096,fu_001915,fu_005805' +
+            ',fu_004995,fu_005889,fu_005812' +
+            ',fu_007345,fu_100060,fu_005777,fu_005911' +
+            ',fu_160222,fu_161725,fu_001928';
         dealData(url);
         myVar = setInterval(() => {
             dealData(url);
