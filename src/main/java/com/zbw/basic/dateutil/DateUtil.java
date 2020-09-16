@@ -191,4 +191,29 @@ public class DateUtil {
 		return dateStr;
 	}
 
+	/**
+	 * Date类型向前向后滚动固定时长
+	 *
+	 * @param date
+	 *            调整前的时间对象
+	 * @param i
+	 *            需要滚动哪一个字段,写法: 年->Calendar.YEAR 月->Calendar.MONTH
+	 *            日->Calendar.DATE 时->Calendar.HOUR_OF_DAY(24小时制)
+	 *            分->Calendar.MINUTE 秒->Calendar.SECOND 毫秒->Calendar.MILLISECOND
+	 * @param d
+	 *            滚动多少,向前(以前)就用负数,向后(未来)就用正数
+	 */
+	public static Date dateRoll(Date date, int i, int d) {
+		// 获取Calendar对象并以传进来的时间为准
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		// 将现在的时间滚动固定时长,转换为Date类型赋值
+		calendar.add(i, d);
+		// 转换为Date类型再赋值
+		date = calendar.getTime();
+		return date;
+	}
+
+
+
 }
